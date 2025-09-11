@@ -4,10 +4,14 @@ import {
   getDocs,
   query,
   where,
-  Timestamp,
   orderBy,
-  Query,
+  limit,
+  startAfter,
   DocumentData,
+  QueryDocumentSnapshot,
+  getCountFromServer,
+  Timestamp,
+  Query,
 } from 'firebase/firestore';
 
 export type Subscriber = {
@@ -18,49 +22,62 @@ export type Subscriber = {
   createdAt: Date;
 };
 
-export async function getSubscribersByStatus(
-  status?: 'subscribed' | 'unsubscribed'
-): Promise<Subscriber[]> {
+// Function to get only the count
+export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed') {
+  const subscribersCollectionRef = collection(db, 'subscribers');
+  let q;
+  if (status) {
+    q = query(subscribersCollectionRef, where('status', '==', status));
+  } else {
+    q = query(subscribersCollectionRef);
+  }
+  const snapshot = await getCountFromServer(q);
+  return snapshot.data().count;
+}
+
+// Updated function to fetch pages with a dynamic limit
+export async function getSubscribersPaginated(
+  status?: 'subscribed' | 'unsubscribed',
+  lastVisible?: QueryDocumentSnapshot<DocumentData>,
+  limitSize: number = 10 // Default to 10
+) {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
     
-    let q: Query<DocumentData>;
+    let q: Query<DocumentData> = query(subscribersCollectionRef);
 
-    // This is the corrected query logic
     if (status) {
-      // If a status is provided, create a query that filters AND sorts
-      q = query(
-        subscribersCollectionRef,
-        where('status', '==', status),
-        orderBy('createdAt', 'desc')
-      );
-    } else {
-      // If no status is provided (for the "All" filter), create a query that only sorts
-      q = query(subscribersCollectionRef, orderBy('createdAt', 'desc'));
+      q = query(q, where('status', '==', status));
     }
+    q = query(q, orderBy('createdAt', 'desc'));
+    if (lastVisible) {
+      q = query(q, startAfter(lastVisible));
+    }
+    q = query(q, limit(limitSize)); // Use the dynamic limitSize
 
     const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        fullName: data.fullName,
-        email: data.email,
-        status: data.status,
-        createdAt: data.createdAt.toDate(),
-      };
-    });
+    const subscribers: Subscriber[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt.toDate(),
+    })) as Subscriber[];
+
+    return {
+      subscribers,
+      lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+    };
   } catch (error) {
     console.error("Error fetching subscribers:", error);
-    return [];
+    return { subscribers: [], lastVisible: null };
   }
 }
 
+// Function to get dashboard statistics
 export async function getSubscriberStats() {
+  // ... this function remains the same ...
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
-
     const activeSubscribersQuery = query(
       subscribersCollectionRef,
       where('status', '==', 'subscribed')
