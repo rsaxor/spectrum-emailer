@@ -3,7 +3,8 @@ import { SubscribersTable, TableSkeleton } from './subscribers-table';
 import { PageClientContent } from './page-client';
 import { FilterTabs } from './filter-tabs';
 
-// No dynamic export needed here
+export const dynamic = 'force-dynamic';
+
 export default function SubscribersPage({
   searchParams,
 }: {
@@ -12,7 +13,11 @@ export default function SubscribersPage({
   return (
     <div>
       <PageClientContent />
-      <FilterTabs />
+
+      {/* Add Suspense wrapper around FilterTabs */}
+      <Suspense fallback={<div>Loading filters...</div>}>
+        <FilterTabs />
+      </Suspense>
       
       <Suspense fallback={<TableSkeleton />}>
         <SubscribersTable searchParams={searchParams} />
