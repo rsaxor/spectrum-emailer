@@ -1,63 +1,37 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getSubscribersByStatus, Subscriber } from '@/lib/subscriber.service';
+import { Subscriber } from '@/lib/subscriber.service';
 import { format } from 'date-fns';
 
-// This is the skeleton component that will be shown during loading.
-export function TableSkeleton() {
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <Skeleton className="h-5 w-24 bg-gray-500" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-5 w-40 bg-gray-500" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-5 w-20 bg-gray-500" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-5 w-32 bg-gray-500" />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {[...Array(5)].map((_, i) => (
-            <TableRow key={i}>
-              <TableCell>
-                <Skeleton className="h-5 w-32 bg-gray-500" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-48 bg-gray-500" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-24 bg-gray-500" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-40 bg-gray-500" />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
+export function SubscribersTable() {
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
 
+  useEffect(() => {
+    setIsLoading(true);
+    const url = status 
+      ? `/api/subscribers?status=${status}` 
+      : '/api/subscribers';
 
-// The component now accepts an optional status prop
-export async function SubscribersTable({ status }: { status?: string }) {
-  const subscribers = await getSubscribersByStatus(status);
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setSubscribers(data);
+        setIsLoading(false);
+      });
+  }, [status]); // Re-run this effect whenever the 'status' filter changes
+
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
 
   return (
     <div className="rounded-md border">
@@ -76,7 +50,50 @@ export async function SubscribersTable({ status }: { status?: string }) {
               <TableCell className="font-medium">{subscriber.fullName}</TableCell>
               <TableCell>{subscriber.email}</TableCell>
               <TableCell>{subscriber.status}</TableCell>
-              <TableCell>{format(subscriber.createdAt, 'PPp')}</TableCell>
+              <TableCell>{format(new Date(subscriber.createdAt), 'PPp')}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+// The skeleton component for the loading state
+export function TableSkeleton() {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>
+              <Skeleton className="h-5 w-24 animate-pulse bg-gray-500" />
+            </TableHead>
+            <TableHead>
+              <Skeleton className="h-5 w-40 animate-pulse bg-gray-500" />
+            </TableHead>
+            <TableHead>
+              <Skeleton className="h-5 w-20 animate-pulse bg-gray-500" />
+            </TableHead>
+            <TableHead>
+              <Skeleton className="h-5 w-32 animate-pulse bg-gray-500" />
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...Array(5)].map((_, i) => (
+            <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-5 w-32 animate-pulse bg-gray-500" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-48 animate-pulse bg-gray-500" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-24 animate-pulse bg-gray-500" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-40 animate-pulse bg-gray-500" />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

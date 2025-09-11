@@ -6,8 +6,8 @@ import {
   where,
   Timestamp,
   orderBy,
-  Query, // Import Query type
-  DocumentData, // Import DocumentData type
+  Query,
+  DocumentData,
 } from 'firebase/firestore';
 
 export type Subscriber = {
@@ -18,24 +18,39 @@ export type Subscriber = {
   createdAt: Date;
 };
 
-// This function now fetches based on the status prop
-export async function getSubscribersByStatus(status?: string): Promise<Subscriber[]> {
+export async function getSubscribersByStatus(
+  status?: 'subscribed' | 'unsubscribed'
+): Promise<Subscriber[]> {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
-    let q;
-    if (status === 'subscribed' || status === 'unsubscribed') {
-      q = query(subscribersCollectionRef, where('status', '==', status), orderBy('createdAt', 'desc'));
+    
+    let q: Query<DocumentData>;
+
+    // This is the corrected query logic
+    if (status) {
+      // If a status is provided, create a query that filters AND sorts
+      q = query(
+        subscribersCollectionRef,
+        where('status', '==', status),
+        orderBy('createdAt', 'desc')
+      );
     } else {
-      // Default to all
+      // If no status is provided (for the "All" filter), create a query that only sorts
       q = query(subscribersCollectionRef, orderBy('createdAt', 'desc'));
     }
+
     const querySnapshot = await getDocs(q);
-    // ... mapping logic remains the same
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt.toDate(),
-    })) as Subscriber[];
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        fullName: data.fullName,
+        email: data.email,
+        status: data.status,
+        createdAt: data.createdAt.toDate(),
+      };
+    });
   } catch (error) {
     console.error("Error fetching subscribers:", error);
     return [];
