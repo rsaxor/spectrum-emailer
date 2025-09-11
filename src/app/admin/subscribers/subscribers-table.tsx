@@ -7,43 +7,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getAllSubscribers, Subscriber } from '@/lib/subscriber.service';
+import { getSubscribersByStatus, Subscriber } from '@/lib/subscriber.service';
 import { format } from 'date-fns';
-
-export async function SubscribersTable({
-  searchParams,
-}: {
-  searchParams?: { status?: string };
-}) {
-  const status = searchParams?.status;
-  // Pass the status to the data fetching function
-  const subscribers = await getAllSubscribers(status);
-
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Full Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Subscription Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {subscribers.map((subscriber) => (
-            <TableRow key={subscriber.id}>
-              <TableCell className="font-medium">{subscriber.fullName}</TableCell>
-              <TableCell>{subscriber.email}</TableCell>
-              <TableCell>{subscriber.status}</TableCell>
-              <TableCell>{format(subscriber.createdAt, 'PPp')}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
 
 // This is the skeleton component that will be shown during loading.
 export function TableSkeleton() {
@@ -81,6 +46,37 @@ export function TableSkeleton() {
               <TableCell>
                 <Skeleton className="h-5 w-40 bg-gray-500" />
               </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+
+// The component now accepts an optional status prop
+export async function SubscribersTable({ status }: { status?: string }) {
+  const subscribers = await getSubscribersByStatus(status);
+
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Full Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Subscription Date</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {subscribers.map((subscriber) => (
+            <TableRow key={subscriber.id}>
+              <TableCell className="font-medium">{subscriber.fullName}</TableCell>
+              <TableCell>{subscriber.email}</TableCell>
+              <TableCell>{subscriber.status}</TableCell>
+              <TableCell>{format(subscriber.createdAt, 'PPp')}</TableCell>
             </TableRow>
           ))}
         </TableBody>

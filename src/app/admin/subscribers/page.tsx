@@ -3,24 +3,14 @@ import { SubscribersTable, TableSkeleton } from './subscribers-table';
 import { PageClientContent } from './page-client';
 import { FilterTabs } from './filter-tabs';
 
-export const dynamic = 'force-dynamic';
-
-export default function SubscribersPage({
-  searchParams,
-}: {
-  searchParams?: { status?: string };
-}) {
+export default function AllSubscribersPage() {
   return (
     <div>
       <PageClientContent />
-
-      {/* Add Suspense wrapper around FilterTabs */}
-      <Suspense fallback={<div>Loading filters...</div>}>
-        <FilterTabs />
-      </Suspense>
-      
+      <FilterTabs />
       <Suspense fallback={<TableSkeleton />}>
-        <SubscribersTable searchParams={searchParams} />
+        {/* This page shows all subscribers by default */}
+        <SubscribersTable />
       </Suspense>
     </div>
   );

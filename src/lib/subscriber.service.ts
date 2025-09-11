@@ -6,9 +6,10 @@ import {
   where,
   Timestamp,
   orderBy,
+  Query, // Import Query type
+  DocumentData, // Import DocumentData type
 } from 'firebase/firestore';
 
-// Define a type for our subscriber data for better type-safety
 export type Subscriber = {
   id: string;
   fullName: string;
@@ -17,43 +18,30 @@ export type Subscriber = {
   createdAt: Date;
 };
 
-// Service function to get a list of all subscribers with optional filtering
-export async function getAllSubscribers(status?: string): Promise<Subscriber[]> {
+// This function now fetches based on the status prop
+export async function getSubscribersByStatus(status?: string): Promise<Subscriber[]> {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
-    
     let q;
-    // If a valid status is provided, add a 'where' clause to the query
-    if (status && (status === 'subscribed' || status === 'unsubscribed')) {
-      q = query(
-        subscribersCollectionRef, 
-        where('status', '==', status),
-        orderBy('createdAt', 'desc')
-      );
+    if (status === 'subscribed' || status === 'unsubscribed') {
+      q = query(subscribersCollectionRef, where('status', '==', status), orderBy('createdAt', 'desc'));
     } else {
-      // Otherwise, fetch all subscribers
+      // Default to all
       q = query(subscribersCollectionRef, orderBy('createdAt', 'desc'));
     }
-
     const querySnapshot = await getDocs(q);
-
-    return querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        fullName: data.fullName,
-        email: data.email,
-        status: data.status,
-        createdAt: data.createdAt.toDate(),
-      };
-    });
+    // ... mapping logic remains the same
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt.toDate(),
+    })) as Subscriber[];
   } catch (error) {
     console.error("Error fetching subscribers:", error);
     return [];
   }
 }
 
-// Service function to get dashboard statistics
 export async function getSubscriberStats() {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
