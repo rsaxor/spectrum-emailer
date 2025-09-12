@@ -15,7 +15,7 @@ import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
 const PAGE_SIZE = 10;
 
-function TableSkeleton() {
+export function TableSkeleton() {
   return (
     <div className="rounded-md border">
       <Table>
