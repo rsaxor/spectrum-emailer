@@ -1,38 +1,53 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Subscriber } from '@/lib/subscriber.service';
 
-export function CreateSubscriberForm({ setOpen }: { setOpen: (open: boolean) => void }) {
+// Update the props to pass back a Subscriber object
+interface CreateSubscriberFormProps {
+  setOpen: (open: boolean) => void;
+  onSuccess: (newSubscriber: Subscriber) => void;
+}
+
+export function CreateSubscriberForm({ setOpen, onSuccess }: CreateSubscriberFormProps) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    setError(null);
 
-    const response = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, email }),
-    });
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email }),
+      });
 
-    if (!response.ok) {
       const data = await response.json();
-      setError(data.message || 'An error occurred.');
-    } else {
-      setOpen(false); // Close the dialog on success
-      router.refresh(); // Refresh the page to show the new subscriber
+      if (!response.ok) {
+        throw new Error(data.message || 'An error occurred.');
+      }
+      
+      setOpen(false);
+      onSuccess(data.newSubscriber); // Pass the new subscriber data back
+      toast.success('Subscriber added successfully!');
+
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    } finally {
+        setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -62,7 +77,6 @@ export function CreateSubscriberForm({ setOpen }: { setOpen: (open: boolean) => 
           required
         />
       </div>
-      {error && <p className="col-span-4 text-center text-sm text-red-500">{error}</p>}
       <Button type="submit" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Create Subscriber

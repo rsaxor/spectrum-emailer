@@ -24,31 +24,51 @@ export async function POST(request: Request) {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      // Email exists, so check its status
       const existingDoc = querySnapshot.docs[0];
       const existingData = existingDoc.data();
 
       if (existingData.status === 'unsubscribed') {
-        // User is re-subscribing, so update their status
         await updateDoc(existingDoc.ref, {
           status: 'subscribed',
           updatedAt: Timestamp.now(),
         });
-        return NextResponse.json({ message: 'Welcome back! You have been re-subscribed.' });
+        
+        // Construct the full subscriber object to return
+        const reSubscribedUser = {
+            id: existingDoc.id,
+            fullName: existingData.fullName,
+            email: existingData.email,
+            status: 'subscribed',
+            createdAt: existingData.createdAt.toDate(), // Include createdAt
+        };
+
+        return NextResponse.json({ 
+            message: 'Welcome back! You have been re-subscribed.',
+            newSubscriber: reSubscribedUser
+        });
       } else {
-        // User is already subscribed
         return NextResponse.json({ message: 'This email is already subscribed.' }, { status: 409 });
       }
     } else {
-      // Email does not exist, so create a new subscriber
-      await addDoc(subscribersRef, {
+      const newSubscriberData = {
         fullName,
         email,
-        status: 'subscribed',
+        status: 'subscribed' as 'subscribed' | 'unsubscribed',
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-      });
-      return NextResponse.json({ message: 'Subscription successful!' }, { status: 201 });
+      };
+      const docRef = await addDoc(subscribersRef, newSubscriberData);
+
+      return NextResponse.json({ 
+        message: 'Subscription successful!',
+        newSubscriber: {
+          id: docRef.id,
+          fullName: newSubscriberData.fullName,
+          email: newSubscriberData.email,
+          status: newSubscriberData.status,
+          createdAt: newSubscriberData.createdAt.toDate()
+        }
+      }, { status: 201 });
     }
   } catch (error) {
     console.error('Subscription API error:', error);

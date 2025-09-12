@@ -35,25 +35,32 @@ export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed'
   return snapshot.data().count;
 }
 
-// Updated function to fetch pages with a dynamic limit
+// Updated function to handle dynamic sorting
 export async function getSubscribersPaginated(
   status?: 'subscribed' | 'unsubscribed',
   lastVisible?: QueryDocumentSnapshot<DocumentData>,
-  limitSize: number = 10 // Default to 10
+  limitSize: number = 10,
+  sortBy: string = 'createdAt', // Default sort
+  orderDir: 'asc' | 'desc' = 'desc' // Default direction
 ) {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
     
     let q: Query<DocumentData> = query(subscribersCollectionRef);
 
+    // Apply filter
     if (status) {
       q = query(q, where('status', '==', status));
     }
-    q = query(q, orderBy('createdAt', 'desc'));
+    
+    // Apply sorting
+    q = query(q, orderBy(sortBy, orderDir));
+
+    // Apply pagination
     if (lastVisible) {
       q = query(q, startAfter(lastVisible));
     }
-    q = query(q, limit(limitSize)); // Use the dynamic limitSize
+    q = query(q, limit(limitSize));
 
     const querySnapshot = await getDocs(q);
 
