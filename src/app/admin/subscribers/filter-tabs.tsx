@@ -1,44 +1,22 @@
 'use client';
-
-import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export function FilterTabs() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentStatus = searchParams.get('status') || 'all';
-
-  const handleFilterClick = (status: string) => {
-    const newPath = status === 'all' 
-      ? '/admin/subscribers' 
-      : `/admin/subscribers?status=${status}`;
-    
-    // Change the URL
-    router.push(newPath);
-    // Force a server data refresh
-    router.refresh(); 
-  };
+// Accept searchParams as a prop
+export function FilterTabs({ searchParams }: { searchParams?: { status?: 'subscribed' | 'unsubscribed' } }) {
+  const currentStatus = searchParams?.status || 'all';
 
   return (
     <div className="flex gap-2 mb-4">
-      <Button
-        variant={currentStatus === 'all' ? 'default' : 'outline'}
-        onClick={() => handleFilterClick('all')}
-      >
-        All
-      </Button>
-      <Button
-        variant={currentStatus === 'subscribed' ? 'default' : 'outline'}
-        onClick={() => handleFilterClick('subscribed')}
-      >
-        Subscribed
-      </Button>
-      <Button
-        variant={currentStatus === 'unsubscribed' ? 'default' : 'outline'}
-        onClick={() => handleFilterClick('unsubscribed')}
-      >
-        Unsubscribed
-      </Button>
+      <Link href="/admin/subscribers">
+        <Button variant={currentStatus === 'all' ? 'default' : 'outline'}>All</Button>
+      </Link>
+      <Link href="/admin/subscribers?status=subscribed">
+        <Button variant={currentStatus === 'subscribed' ? 'default' : 'outline'}>Subscribed</Button>
+      </Link>
+      <Link href="/admin/subscribers?status=unsubscribed">
+        <Button variant={currentStatus === 'unsubscribed' ? 'default' : 'outline'}>Unsubscribed</Button>
+      </Link>
     </div>
   );
 }

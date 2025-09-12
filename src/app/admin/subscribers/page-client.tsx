@@ -2,18 +2,12 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CreateSubscriberForm } from './create-subscriber-form';
-import { FilterTabs } from './filter-tabs'; // Ensure this is imported
+import { FilterTabs } from './filter-tabs';
 
-export function PageClientContent() {
+// Accept searchParams as a prop
+export function PageClientContent({ searchParams }: { searchParams?: { status?: 'subscribed' | 'unsubscribed'; page?: string } }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,17 +21,15 @@ export function PageClientContent() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Create New Subscriber</DialogTitle>
-              <DialogDescription>
-                Add a new person to your mailing list here.
-              </DialogDescription>
+              <DialogDescription>Add a new person to your mailing list here.</DialogDescription>
             </DialogHeader>
             <CreateSubscriberForm setOpen={setOpen} />
           </DialogContent>
         </Dialog>
       </div>
       
-      {/* Add the filter tabs back here */}
-      <FilterTabs />
+      {/* Pass searchParams down to the FilterTabs */}
+      <FilterTabs searchParams={searchParams} />
     </div>
   );
 }

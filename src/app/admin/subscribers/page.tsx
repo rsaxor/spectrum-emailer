@@ -1,21 +1,43 @@
-import { Suspense } from 'react';
-import { SubscribersTable, TableSkeleton } from './subscribers-table';
-import { PageClientContent } from './page-client';
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { CreateSubscriberForm } from './create-subscriber-form';
 import { FilterTabs } from './filter-tabs';
 
-export default function SubscribersPage() {
+// Define the type for the props the component will accept
+interface PageClientContentProps {
+  searchParams?: { 
+    status?: 'subscribed' | 'unsubscribed';
+    page?: string;
+  };
+}
+
+// Use the props type in the component's function signature
+export function PageClientContent({ searchParams }: PageClientContentProps) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div>
-      <PageClientContent />
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Subscribers</h1>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>New Subscriber</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create New Subscriber</DialogTitle>
+              <DialogDescription>Add a new person to your mailing list here.</DialogDescription>
+            </DialogHeader>
+            <CreateSubscriberForm setOpen={setOpen} />
+          </DialogContent>
+        </Dialog>
+      </div>
       
-      {/* Wrap BOTH components that use useSearchParams */}
-      <Suspense fallback={<div>Loading filters...</div>}>
-        <FilterTabs />
-      </Suspense>
-
-      <Suspense fallback={<TableSkeleton />}>
-        <SubscribersTable />
-      </Suspense>
+      {/* Pass the searchParams down to the FilterTabs */}
+      <FilterTabs searchParams={searchParams} />
     </div>
   );
 }
