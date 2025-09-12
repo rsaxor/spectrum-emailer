@@ -1,43 +1,12 @@
-'use client';
+import { Suspense } from 'react';
+import { SubscribersView } from './subscribers-view';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CreateSubscriberForm } from './create-subscriber-form';
-import { FilterTabs } from './filter-tabs';
-
-// Define the type for the props the component will accept
-interface PageClientContentProps {
-  searchParams?: { 
-    status?: 'subscribed' | 'unsubscribed';
-    page?: string;
-  };
-}
-
-// Use the props type in the component's function signature
-export function PageClientContent({ searchParams }: PageClientContentProps) {
-  const [open, setOpen] = useState(false);
-
+export default function SubscribersPage() {
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Subscribers</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>New Subscriber</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create New Subscriber</DialogTitle>
-              <DialogDescription>Add a new person to your mailing list here.</DialogDescription>
-            </DialogHeader>
-            <CreateSubscriberForm setOpen={setOpen} />
-          </DialogContent>
-        </Dialog>
-      </div>
-      
-      {/* Pass the searchParams down to the FilterTabs */}
-      <FilterTabs searchParams={searchParams} />
+      <Suspense fallback={<div>Loading Subscribers...</div>}>
+        <SubscribersView />
+      </Suspense>
     </div>
   );
 }
