@@ -8,7 +8,7 @@ export default function SubscribersPage() {
     <div>
       <PageClientContent />
       
-      {/* The SubscribersTable must be wrapped in Suspense */}
+      {/* This Suspense wrapper is essential for the build to pass */}
       <Suspense fallback={<TableSkeleton />}>
         <SubscribersTable />
       </Suspense>
