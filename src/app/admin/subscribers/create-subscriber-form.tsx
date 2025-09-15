@@ -8,10 +8,10 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Subscriber } from '@/lib/subscriber.service';
 
-// Update the props to pass back a Subscriber object
+// Correct the type definition for the props here
 interface CreateSubscriberFormProps {
   setOpen: (open: boolean) => void;
-  onSuccess: (newSubscriber: Subscriber) => void;
+  onSuccess: (newSubscriber: Subscriber) => void; // Expects a Subscriber object
 }
 
 export function CreateSubscriberForm({ setOpen, onSuccess }: CreateSubscriberFormProps) {
@@ -36,7 +36,7 @@ export function CreateSubscriberForm({ setOpen, onSuccess }: CreateSubscriberFor
       }
       
       setOpen(false);
-      onSuccess(data.newSubscriber); // Pass the new subscriber data back
+      onSuccess(data.newSubscriber); // Pass the data to the callback
       toast.success('Subscriber added successfully!');
 
     } catch (err) {
