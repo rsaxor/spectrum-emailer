@@ -30,6 +30,7 @@ export function SubscribersView() {
 	const {
 		subscribers,
 		isLoading,
+		setIsLoading,
 		isCountLoading,
 		pageCount,
 		currentPage,
@@ -79,7 +80,10 @@ export function SubscribersView() {
 				setSelectedIds([]);
 				return `${ids.length} subscriber(s) deleted.`;
 			},
-			error: "Failed to delete subscribers.",
+			error: (err) => {
+				setIsLoading(false); // Make sure to stop loading on error
+				return "Failed to delete subscribers.";
+			},
 		});
 	};
 
@@ -132,7 +136,7 @@ export function SubscribersView() {
 			<SubscribersTable
 				subscribers={subscribers}
 				isLoading={isLoading}
-				isCountLoading={isCountLoading} // Add the missing prop
+				isCountLoading={isCountLoading}
 				pageCount={pageCount}
 				currentPage={currentPage}
 				handlePageChange={handlePageChange}

@@ -27,6 +27,7 @@ export function useDataTable() {
 
   const fetchDataForPage = useCallback(async (page: number, currentStatus?: typeof status, currentSortBy?: string, currentOrder?: string) => {
     setIsLoading(true);
+
     if (page > 1 && !pageCursors.has(page)) {
       for (let i = 2; i <= page; i++) {
         if (!pageCursors.has(i)) {
@@ -46,6 +47,7 @@ export function useDataTable() {
     const { subscribers: newSubscribers, lastVisible: newLastVisible } = await getSubscribersPaginated(
       currentStatus, lastVisible, PAGE_SIZE, currentSortBy, currentOrder as 'asc' | 'desc'
     );
+    
     setSubscribers(newSubscribers);
     if (newLastVisible) {
       pageCursors.set(page + 1, newLastVisible);
@@ -60,17 +62,20 @@ export function useDataTable() {
   useEffect(() => {
     if (!isClient) return;
     
-    setIsCountLoading(true);
-    getSubscribersCount(status).then(count => {
-      setPageCount(Math.ceil(count / PAGE_SIZE));
-      setIsCountLoading(false);
-    });
+    const execute = async () => {
+        setIsCountLoading(true);
+        setIsLoading(true);
+
+        await getSubscribersCount(status).then(count => {
+            setPageCount(Math.ceil(count / PAGE_SIZE));
+            setIsCountLoading(false);
+        });
+
+        await fetchDataForPage(currentPage, status, sortBy, order);
+    };
     
-  }, [status, isClient]);
-  
-  useEffect(() => {
-    if (!isClient) return;
-    fetchDataForPage(currentPage, status, sortBy, order);
+    execute();
+    
   }, [searchParams, isClient, fetchDataForPage]);
 
   const handlePageChange = (page: number) => {
@@ -106,6 +111,7 @@ export function useDataTable() {
   return {
     subscribers,
     isLoading,
+    setIsLoading,
     isCountLoading,
     pageCount,
     setPageCount,
