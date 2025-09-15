@@ -1,6 +1,8 @@
 import { db } from '@/lib/firebase';
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -82,7 +84,6 @@ export async function getSubscribersPaginated(
 
 // Function to get dashboard statistics
 export async function getSubscriberStats() {
-  // ... this function remains the same ...
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
     const activeSubscribersQuery = query(
@@ -109,5 +110,28 @@ export async function getSubscriberStats() {
   } catch (error) {
     console.error("Error fetching subscriber stats:", error);
     return { totalSubscribers: 0, newSubscribers: 0 };
+  }
+}
+
+export async function getSubscriberById(id: string): Promise<Subscriber | null> {
+  try {
+    const docRef = doc(db, 'subscribers', id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+    
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      fullName: data.fullName,
+      email: data.email,
+      status: data.status,
+      createdAt: data.createdAt.toDate(),
+    };
+  } catch (error) {
+    console.error("Error fetching subscriber by ID:", error);
+    return null;
   }
 }
