@@ -18,7 +18,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
-import { Subscriber } from "@/lib/subscriber.service"; // Keep Subscriber for type safety
+import { Subscriber } from "@/lib/subscriber.service";
 
 export function SubscribersView() {
 	const [isSelectMode, setIsSelectMode] = useState(false);
@@ -27,10 +27,10 @@ export function SubscribersView() {
 
 	const router = useRouter();
 
-	// Remove setPageCount and fetchData from this list
 	const {
 		subscribers,
 		isLoading,
+		isCountLoading,
 		pageCount,
 		currentPage,
 		sortBy,
@@ -132,6 +132,7 @@ export function SubscribersView() {
 			<SubscribersTable
 				subscribers={subscribers}
 				isLoading={isLoading}
+				isCountLoading={isCountLoading} // Add the missing prop
 				pageCount={pageCount}
 				currentPage={currentPage}
 				handlePageChange={handlePageChange}

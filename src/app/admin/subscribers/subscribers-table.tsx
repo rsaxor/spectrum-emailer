@@ -24,48 +24,51 @@ function SortableHeader({ label, value, sortBy, order, onClick }: { label: strin
   );
 }
 
-export function TableSkeleton() {
+function TableSkeleton() {
   return (
-    <div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead><Skeleton className="h-5 bg-gray-500 w-24 animate-pulse" /></TableHead>
-              <TableHead><Skeleton className="h-5 bg-gray-500 w-40 animate-pulse" /></TableHead>
-              <TableHead><Skeleton className="h-5 bg-gray-500 w-20 animate-pulse" /></TableHead>
-              <TableHead><Skeleton className="h-5 bg-gray-500 w-32 animate-pulse" /></TableHead>
-              <TableHead><Skeleton className="h-5 bg-gray-500 w-16 animate-pulse" /></TableHead>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-24 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-40 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-20 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-32 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-16 animate-pulse" /></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...Array(PAGE_SIZE)].map((_, i) => (
+            <TableRow key={i}>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-32 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-48 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-24 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-40 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-8 bg-gray-500 w-8 animate-pulse" /></TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {[...Array(PAGE_SIZE)].map((_, i) => (
-              <TableRow key={i}>
-                <TableCell><Skeleton className="h-5 bg-gray-500 w-32 animate-pulse" /></TableCell>
-                <TableCell><Skeleton className="h-5 bg-gray-500 w-48 animate-pulse" /></TableCell>
-                <TableCell><Skeleton className="h-5 bg-gray-500 w-24 animate-pulse" /></TableCell>
-                <TableCell><Skeleton className="h-5 bg-gray-500 w-40 animate-pulse" /></TableCell>
-                <TableCell><Skeleton className="h-8 bg-gray-500 w-8 animate-pulse" /></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="mt-4 flex justify-center">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
-          <Skeleton className="h-9 w-9 rounded-md bg-gray-500" />
-          <Skeleton className="h-9 w-9 rounded-md bg-gray-500" />
-          <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
-        </div>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
+}
+
+function PaginationSkeleton() {
+    return (
+        <div className="mt-4 flex justify-center">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
+              <Skeleton className="h-9 w-9 rounded-md bg-gray-500" />
+              <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
+            </div>
+        </div>
+    );
 }
 
 interface SubscribersTableProps {
   subscribers: Subscriber[];
   isLoading: boolean;
+  isCountLoading: boolean;
   pageCount: number;
   currentPage: number;
   handlePageChange: (page: number) => void;
@@ -83,6 +86,7 @@ interface SubscribersTableProps {
 export function SubscribersTable({
   subscribers,
   isLoading,
+  isCountLoading,
   pageCount,
   currentPage,
   handlePageChange,
@@ -117,66 +121,55 @@ export function SubscribersTable({
     return pages;
   };
 
-  if (isLoading) {
-    return <TableSkeleton />;
-  }
-
   return (
     <div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {isSelectMode && (
-                <TableHead className="w-[40px]">
-                  <Checkbox 
-                    checked={subscribers.length > 0 && subscribers.every(s => selectedIds.includes(s.id))}
-                    onCheckedChange={(checked) => onSelectAll(!!checked)}
-                  />
-                </TableHead>
-              )}
-              <SortableHeader label="Full Name" value="fullName" sortBy={sortBy} order={order} onClick={handleSortChange} />
-              <SortableHeader label="Email" value="email" sortBy={sortBy} order={order} onClick={handleSortChange} />
-              <SortableHeader label="Status" value="status" sortBy={sortBy} order={order} onClick={handleSortChange} />
-              <SortableHeader label="Subscription Date" value="createdAt" sortBy={sortBy} order={order} onClick={handleSortChange} />
-              {!isSelectMode && <TableHead>Actions</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subscribers.map((subscriber: Subscriber) => (
-              <TableRow key={subscriber.id}>
-                {isSelectMode && <TableCell><Checkbox checked={selectedIds.includes(subscriber.id)} onCheckedChange={() => handleSelect(subscriber.id)} /></TableCell>}
-                <TableCell className="font-medium">{subscriber.fullName}</TableCell>
-                <TableCell>{subscriber.email}</TableCell>
-                <TableCell>{subscriber.status}</TableCell>
-                <TableCell>{format(new Date(subscriber.createdAt), 'PPp')}</TableCell>
-                {!isSelectMode && (
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEdit(subscriber.id)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500" onClick={() => onDelete(subscriber.id)}>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                )}
+      {isLoading ? <TableSkeleton /> : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {isSelectMode && <TableHead className="w-[40px]"><Checkbox checked={subscribers.length > 0 && subscribers.every(s => selectedIds.includes(s.id))} onCheckedChange={(checked) => onSelectAll(!!checked)} /></TableHead>}
+                <SortableHeader label="Full Name" value="fullName" sortBy={sortBy} order={order} onClick={handleSortChange} />
+                <SortableHeader label="Email" value="email" sortBy={sortBy} order={order} onClick={handleSortChange} />
+                <SortableHeader label="Status" value="status" sortBy={sortBy} order={order} onClick={handleSortChange} />
+                <SortableHeader label="Subscription Date" value="createdAt" sortBy={sortBy} order={order} onClick={handleSortChange} />
+                {!isSelectMode && <TableHead>Actions</TableHead>}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); if (currentPage > 1) handlePageChange(currentPage - 1); }} className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''} />
-          </PaginationItem>
-          {renderPaginationItems()}
-          <PaginationItem>
-            <PaginationNext href="#" onClick={(e) => { e.preventDefault(); if (currentPage < pageCount) handlePageChange(currentPage + 1); }} className={currentPage === pageCount ? 'pointer-events-none opacity-50' : ''} />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            </TableHeader>
+            <TableBody>
+              {subscribers.map((subscriber: Subscriber) => (
+                <TableRow key={subscriber.id}>
+                  {isSelectMode && <TableCell><Checkbox checked={selectedIds.includes(subscriber.id)} onCheckedChange={() => handleSelect(subscriber.id)} /></TableCell>}
+                  <TableCell className="font-medium">{subscriber.fullName}</TableCell>
+                  <TableCell>{subscriber.email}</TableCell>
+                  <TableCell>{subscriber.status}</TableCell>
+                  <TableCell>{format(new Date(subscriber.createdAt), 'PPp')}</TableCell>
+                  {!isSelectMode && (
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => onEdit(subscriber.id)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-500" onClick={() => onDelete(subscriber.id)}>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+      {isCountLoading ? <PaginationSkeleton /> : (
+        <Pagination className="mt-4">
+          <PaginationContent>
+            <PaginationItem><PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); if (currentPage > 1) handlePageChange(currentPage - 1); }} className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''} /></PaginationItem>
+            {renderPaginationItems()}
+            <PaginationItem><PaginationNext href="#" onClick={(e) => { e.preventDefault(); if (currentPage < pageCount) handlePageChange(currentPage + 1); }} className={currentPage === pageCount ? 'pointer-events-none opacity-50' : ''} /></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }

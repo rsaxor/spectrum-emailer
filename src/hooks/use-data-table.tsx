@@ -10,6 +10,7 @@ const PAGE_SIZE = 10;
 export function useDataTable() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCountLoading, setIsCountLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
   const [isClient, setIsClient] = useState(false);
   
@@ -26,8 +27,6 @@ export function useDataTable() {
 
   const fetchDataForPage = useCallback(async (page: number, currentStatus?: typeof status, currentSortBy?: string, currentOrder?: string) => {
     setIsLoading(true);
-
-    // This block correctly fetches intermediate cursors when jumping pages
     if (page > 1 && !pageCursors.has(page)) {
       for (let i = 2; i <= page; i++) {
         if (!pageCursors.has(i)) {
@@ -43,12 +42,10 @@ export function useDataTable() {
         }
       }
     }
-
     const lastVisible = pageCursors.get(page) || undefined;
     const { subscribers: newSubscribers, lastVisible: newLastVisible } = await getSubscribersPaginated(
       currentStatus, lastVisible, PAGE_SIZE, currentSortBy, currentOrder as 'asc' | 'desc'
     );
-    
     setSubscribers(newSubscribers);
     if (newLastVisible) {
       pageCursors.set(page + 1, newLastVisible);
@@ -60,28 +57,31 @@ export function useDataTable() {
     setIsClient(true);
   }, []);
 
-  // This single, robust useEffect handles all data fetching
   useEffect(() => {
     if (!isClient) return;
     
-    const execute = async () => {
-      await getSubscribersCount(status).then(count => {
-        setPageCount(Math.ceil(count / PAGE_SIZE));
-      });
-      await fetchDataForPage(currentPage, status, sortBy, order);
-    };
+    setIsCountLoading(true);
+    getSubscribersCount(status).then(count => {
+      setPageCount(Math.ceil(count / PAGE_SIZE));
+      setIsCountLoading(false);
+    });
     
-    execute();
-    
-  }, [searchParams, isClient, fetchDataForPage]); // Depend on searchParams directly
+  }, [status, isClient]);
+  
+  useEffect(() => {
+    if (!isClient) return;
+    fetchDataForPage(currentPage, status, sortBy, order);
+  }, [searchParams, isClient, fetchDataForPage]);
 
   const handlePageChange = (page: number) => {
+    setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', String(page));
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleSortChange = (newSortBy: string) => {
+    setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     const currentOrder = params.get('order') || 'desc';
     if (params.get('sortBy') === newSortBy) {
@@ -94,11 +94,11 @@ export function useDataTable() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  // This function correctly navigates to page 1 to trigger a full refresh
   const handleSuccess = () => {
+    setIsLoading(true);
+    setIsCountLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', '1');
-    // Add a random query param to ensure searchParams changes, forcing the useEffect to run
     params.set('refreshId', Math.random().toString());
     router.push(`${pathname}?${params.toString()}`);
   };
@@ -106,6 +106,7 @@ export function useDataTable() {
   return {
     subscribers,
     isLoading,
+    isCountLoading,
     pageCount,
     setPageCount,
     currentPage,
