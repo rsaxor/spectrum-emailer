@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useEntity } from '@/context/EntityContext';
-import { LayoutDashboard, Users, LogOut, ChevronsUpDown } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, ChevronsUpDown, Link as LinkIcon, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 export default function SideNav() {
   const router = useRouter();
@@ -19,9 +20,16 @@ export default function SideNav() {
     router.push('/');
   };
 
+  const handleCopyLink = () => {
+    const subscribeUrl = `${window.location.origin}/subscribe`;
+    navigator.clipboard.writeText(subscribeUrl);
+    toast.success('Subscriber link copied!');
+  };
+
   const navLinks = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
+    { href: '/admin/send-newsletter', label: 'Send Newsletter', icon: Send }
   ];
 
   return (
@@ -54,6 +62,14 @@ export default function SideNav() {
               </Link>
             );
           })}
+          {/* Styled the button as a link for consistency */}
+          <button
+            onClick={handleCopyLink}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-900 transition-all hover:bg-gray-200 dark:text-gray-50 dark:hover:bg-gray-800 text-left"
+          >
+            <LinkIcon className="h-4 w-4" />
+            Copy Subscribe Link
+          </button>
         </nav>
       </div>
       <div>
