@@ -16,81 +16,95 @@ type Subscriber = {
 };
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    // Get entity from the request body
-    const { templateName, subject, entity } = body; 
+  const body = await request.json();
+  const { templateName, subject, entity } = body;
 
-    if (!templateName || !subject || !entity) {
-      return NextResponse.json({ message: 'Template name, subject, and entity are required.' }, { status: 400 });
-    }
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
-    const templatePath = path.join(process.cwd(), 'public', 'emails', templateName);
-    const htmlBody = await fs.readFile(templatePath, 'utf8');
-    
-    // Determine the sender name
-    const senderName = entity === 'All' ? 'Spectrum' : entity;
-    const fromAddress = `${senderName} Newsletter <newsletter@emailer.spectrumdubai.com>`;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // DEVELOPMENT MODE
-      const yourSignupEmail = 'ralph@spectrumdubai.com';
-      const testUnsubscribeLink = `${baseUrl}/unsubscribe?id=test-id`;
-      let personalizedHtml = htmlBody.replace('{{fullName}}', 'Test User');
-      personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', testUnsubscribeLink);
-
-      const { error } = await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: yourSignupEmail,
-        subject: `[TEST ${entity}] ${subject}`,
-        html: personalizedHtml,
-      });
-      
-      if (error) throw new Error('Failed to send test email.');
-      return NextResponse.json({ message: `Test email sent to ${yourSignupEmail}` });
-
-    } else {
-      // PRODUCTION MODE
-      const subscribersRef = collection(db, 'subscribers');
-      const q = query(subscribersRef, where('status', '==', 'subscribed'));
-      const querySnapshot = await getDocs(q);
-      
-      const subscribers: Subscriber[] = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Subscriber[];
-
-      if (subscribers.length === 0) {
-        return NextResponse.json({ message: 'No subscribers to send to.' }, { status: 400 });
-      }
-
-      for (const subscriber of subscribers) {
-        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${subscriber.id}`;
-        
-        let personalizedHtml = htmlBody.replace('{{fullName}}', subscriber.fullName);
-        personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', unsubscribeLink);
-
-        const { error } = await resend.emails.send({
-          from: fromAddress,
-          to: subscriber.email,
-          subject: subject,
-          html: personalizedHtml,
-        });
-
-        if (error) {
-          console.error(`Failed to send to ${subscriber.email}:`, error);
-        } else {
-          console.log(`Successfully sent to ${subscriber.email}`);
-        }
-        
-        await sleep(300);
-      }
-      return NextResponse.json({ message: `Newsletter sent to ${subscribers.length} subscribers!` });
-    }
-
-  } catch (error) {
-    console.error('Send API Error:', error);
-    return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });
+  if (!templateName || !subject || !entity) {
+    // A non-streaming response for initial validation failure
+    return NextResponse.json({ message: 'All fields are required.' }, { status: 400 });
   }
+
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const templatePath = path.join(process.cwd(), 'public', 'emails', templateName);
+        const htmlBody = await fs.readFile(templatePath, 'utf8');
+
+        if (process.env.NODE_ENV === 'development') {
+          // --- DEVELOPMENT MODE (with streaming) ---
+          const yourSignupEmail = 'ralph@spectrumdubai.com';
+          const totalSubscribers = 5; // Simulate a list of 5 subscribers for the progress bar
+
+          for (let count = 1; count <= totalSubscribers; count++) {
+            const progressMessage = `data: {"message": "Sending TEST ${count} of ${totalSubscribers}...", "count": ${count}, "total": ${totalSubscribers}}\n\n`;
+            controller.enqueue(encoder.encode(progressMessage));
+            await sleep(500); // Simulate the delay
+          }
+
+          // Send one final, actual email at the end of the simulation
+          const testUnsubscribeLink = `${baseUrl}/unsubscribe?id=test-id`;
+          let personalizedHtml = htmlBody.replace('{{fullName}}', 'Test User');
+          personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', testUnsubscribeLink);
+          
+          await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: yourSignupEmail,
+            subject: `[TEST ${entity}] ${subject}`,
+            html: personalizedHtml,
+          });
+
+        } else {
+          // --- PRODUCTION MODE (with streaming) ---
+          const subscribersRef = collection(db, 'subscribers');
+          const q = query(subscribersRef, where('status', '==', 'subscribed'));
+          const querySnapshot = await getDocs(q);
+          const subscribers: Subscriber[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Subscriber[];
+          const totalSubscribers = subscribers.length;
+
+          if (totalSubscribers === 0) {
+            controller.enqueue(encoder.encode(`data: {"message": "No subscribers to send to.", "done": true}\n\n`));
+            controller.close();
+            return;
+          }
+
+          const senderName = entity === 'All' ? 'Spectrum' : entity;
+          const fromAddress = `${senderName} Newsletter <newsletter@emailer.spectrumdubai.com>`;
+
+          let count = 0;
+          for (const subscriber of subscribers) {
+            const unsubscribeLink = `${baseUrl}/unsubscribe?id=${subscriber.id}`;
+            let personalizedHtml = htmlBody.replace('{{fullName}}', subscriber.fullName);
+            personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', unsubscribeLink);
+
+            await resend.emails.send({
+              from: fromAddress,
+              to: subscriber.email,
+              subject: subject,
+              html: personalizedHtml,
+            });
+
+            count++;
+            const progressMessage = `data: {"message": "Sent ${count} of ${totalSubscribers}...", "count": ${count}, "total": ${totalSubscribers}}\n\n`;
+            controller.enqueue(encoder.encode(progressMessage));
+            await sleep(300);
+          }
+        }
+
+        // Signal completion for both modes
+        controller.enqueue(encoder.encode(`data: {"message": "Finished sending!", "done": true}\n\n`));
+        controller.close();
+
+      } catch (error) {
+        console.error('Send API Error:', error);
+        controller.enqueue(encoder.encode(`data: {"message": "An error occurred.", "error": true, "done": true}\n\n`));
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+  });
 }

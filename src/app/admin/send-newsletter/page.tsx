@@ -141,15 +141,16 @@ export default function SendNewsletterPage() {
 
   const handleProceedSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!subject.trim()) {
-      event.preventDefault(); // This stops the dialog from closing
+      event.preventDefault();
       toast.error("Subject is required.");
       return;
     }
-
     if (!selectedTemplate) return;
 
     setIsSending(true);
-    const sendPromise = fetch("/api/send", {
+    const toastId = toast.loading("Starting newsletter send...");
+
+    fetch("/api/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -157,21 +158,50 @@ export default function SendNewsletterPage() {
         subject: subject,
         entity: entity,
       }),
-    }).then((res) => {
-      if (!res.ok) throw new Error("Failed to send newsletter.");
-      return res.json();
-    });
+    }).then(response => {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-    toast.promise(sendPromise, {
-      loading: `Sending ${selectedTemplate}...`,
-      success: "Newsletter sent successfully!",
-      error: "Failed to send newsletter.",
+      function processStream() {
+        reader?.read().then(({ done, value }) => {
+          if (done) {
+            setIsSending(false);
+            return;
+          }
+          
+          const chunk = decoder.decode(value);
+          // SSE messages are separated by double newlines
+          const lines = chunk.split('\n\n');
+          
+          lines.forEach(line => {
+            if (line.startsWith('data:')) {
+              try {
+                const json = JSON.parse(line.substring(5));
+                if (json.error) {
+                  toast.error(json.message, { id: toastId });
+                } else if (json.done) {
+                  toast.success(json.message, { id: toastId });
+                } else {
+                  toast.loading(json.message, { id: toastId });
+                }
+              } catch (e) {
+                console.error("Failed to parse SSE chunk", e);
+              }
+            }
+          });
+
+          processStream(); // Continue reading the stream
+        });
+      }
+      processStream();
+    }).catch(err => {
+        toast.error("Failed to initiate send.", { id: toastId });
+        setIsSending(false);
     });
 
     setIsAlertOpen(false);
     setSelectedTemplate(null);
     setSubject("");
-    setIsSending(false);
   };
 
   const totalPages = Math.ceil(data.total / limit);
@@ -298,10 +328,12 @@ export default function SendNewsletterPage() {
                 Confirm Newsletter Send
               </AlertDialogTitle>
               <AlertDialogDescription>
-					You are about to send{" "} <strong className="text-black">{selectedTemplate}</strong>. Please enter a subject line.
+                  You are about to send{" "}
+                  <strong className="text-black">{selectedTemplate}</strong>. Please
+                  enter a subject line.
               </AlertDialogDescription>
               <AlertDialogDescription>
-					Selected entity: <strong className="text-black">{entity}</strong>
+                  Selected entity: <strong className="text-black">{entity}</strong>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="grid gap-2 pb-4">
