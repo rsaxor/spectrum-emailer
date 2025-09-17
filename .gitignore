@@ -43,5 +43,8 @@ next-env.d.ts
 # notes
 .notes
 
+# csv
+/csv
+
 # hash ignore
 hash-password.js

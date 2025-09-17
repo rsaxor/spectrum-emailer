@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useEntity } from '@/context/EntityContext';
-import { LayoutDashboard, Users, LogOut, ChevronsUpDown, Link as LinkIcon, Send } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, ChevronsUpDown, Link as LinkIcon, Send, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -29,7 +29,8 @@ export default function SideNav() {
   const navLinks = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
-    { href: '/admin/send-newsletter', label: 'Send Newsletter', icon: Send }
+    { href: '/admin/send-newsletter', label: 'Send Newsletter', icon: Send },
+    { href: '/admin/export-import', label: 'Export/Import', icon: UploadCloud }
   ];
 
   const imageWidth = entity === 'All' ? 250 : 150;
