@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Entity = 'Spectrum' | 'TCC' | 'HOS';
+// Add "All" to the Entity type
+type Entity = 'All' | 'Spectrum' | 'TCC' | 'HOS';
 
 interface EntityContextType {
   entity: Entity;
@@ -12,11 +13,10 @@ interface EntityContextType {
 const EntityContext = createContext<EntityContextType | null>(null);
 
 export function EntityProvider({ children }: { children: React.ReactNode }) {
-  const [entity, setEntityState] = useState<Entity>('Spectrum'); // Default entity
+  const [entity, setEntityState] = useState<Entity>('All'); // Default to "All"
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Read the saved entity from localStorage on initial load
     const savedEntity = localStorage.getItem('selectedEntity') as Entity;
     if (savedEntity) {
       setEntityState(savedEntity);
@@ -26,12 +26,11 @@ export function EntityProvider({ children }: { children: React.ReactNode }) {
 
   const setEntity = (newEntity: Entity) => {
     setEntityState(newEntity);
-    // Save the selected entity to localStorage to persist it
     localStorage.setItem('selectedEntity', newEntity);
   };
 
   if (!isClient) {
-    return null; // Render nothing on the server to prevent hydration mismatch
+    return null;
   }
 
   return (

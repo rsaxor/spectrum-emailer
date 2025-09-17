@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Entity = 'Spectrum' | 'TCC' | 'HOS';
+type Entity = 'All' | 'Spectrum' | 'TCC' | 'HOS';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -68,6 +68,7 @@ export default function LoginPage() {
                   <SelectValue placeholder="Select an entity" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="All">All Entities</SelectItem>
                   <SelectItem value="Spectrum">Spectrum</SelectItem>
                   <SelectItem value="TCC">The Card Co.</SelectItem>
                   <SelectItem value="HOS">House of Spectrum</SelectItem>

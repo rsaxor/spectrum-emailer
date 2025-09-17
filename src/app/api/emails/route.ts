@@ -18,7 +18,10 @@ export async function GET(request: Request) {
       htmlFiles.map(async (file) => {
         const filePath = path.join(emailsDirectory, file);
         const stats = await fs.stat(filePath);
-        return { name: file, createdAt: stats.birthtime };
+        return {
+          name: file,
+          createdAt: stats.mtime, // Use mtime for modification date
+        };
       })
     );
 
@@ -27,7 +30,6 @@ export async function GET(request: Request) {
       if (sortBy === 'name') {
         return order === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
       }
-      // Default to sorting by date
       return order === 'asc' 
         ? a.createdAt.getTime() - b.createdAt.getTime() 
         : b.createdAt.getTime() - a.createdAt.getTime();

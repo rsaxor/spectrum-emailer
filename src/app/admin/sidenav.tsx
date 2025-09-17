@@ -32,15 +32,20 @@ export default function SideNav() {
     { href: '/admin/send-newsletter', label: 'Send Newsletter', icon: Send }
   ];
 
+  const imageWidth = entity === 'All' ? 250 : 150;
+  const imageHeight = entity === 'All' ? 80 : 50;
+  const imageSrc = entity === 'All' ? '/all.png' : `/${entity.toLowerCase()}.png`;
+  const maxWidthClass = entity === 'All' ? 'max-w-[250px]' : 'max-w-[120px]'
+
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2 bg-gray-50 border-r dark:bg-gray-900 dark:border-gray-800">
-      <div className="mb-4 flex items-center justify-center p-4">
+      <div className="mb-4 mt-3 flex items-center justify-center">
         <Image
-          src={`/${entity.toLowerCase()}.png`}
+          src={imageSrc}
           alt={`${entity} Logo`}
-          width={120}
-          height={50}
-          className="object-contain"
+          width={imageWidth}
+          height={imageHeight}
+          className={`h-auto w-full ${maxWidthClass} object-contain`}
           priority
         />
       </div>
@@ -75,12 +80,13 @@ export default function SideNav() {
       <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-between mb-2 text-sm">
+            <Button variant="ghost" className="w-full justify-between mb-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800">
               Switch Company
               <ChevronsUpDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onSelect={() => setEntity('All')}>All Entities</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setEntity('Spectrum')}>Spectrum</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setEntity('TCC')}>The Card Co.</DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setEntity('HOS')}>House of Spectrum</DropdownMenuItem>

@@ -18,19 +18,20 @@ type Subscriber = {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { templateName, subject } = body;
+    // Get entity from the request body
+    const { templateName, subject, entity } = body; 
 
-    if (!templateName || !subject) {
-      return NextResponse.json({ message: 'Template name and subject are required.' }, { status: 400 });
+    if (!templateName || !subject || !entity) {
+      return NextResponse.json({ message: 'Template name, subject, and entity are required.' }, { status: 400 });
     }
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-    if (!templateName) {
-      return NextResponse.json({ message: 'Template name is required.' }, { status: 400 });
-    }
-
     const templatePath = path.join(process.cwd(), 'public', 'emails', templateName);
     const htmlBody = await fs.readFile(templatePath, 'utf8');
+    
+    // Determine the sender name
+    const senderName = entity === 'All' ? 'Spectrum' : entity;
+    const fromAddress = `${senderName} Newsletter <newsletter@emailer.spectrumdubai.com>`;
     
     if (process.env.NODE_ENV === 'development') {
       // DEVELOPMENT MODE
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
       const { error } = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: yourSignupEmail,
-        subject: `[TEST] ${subject}`,
+        subject: `[TEST ${entity}] ${subject}`,
         html: personalizedHtml,
       });
       
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
         personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', unsubscribeLink);
 
         const { error } = await resend.emails.send({
-          from: 'Spectrum Newsletter <newsletter@emailer.spectrumdubai.com>',
+          from: fromAddress,
           to: subscriber.email,
           subject: subject,
           html: personalizedHtml,
