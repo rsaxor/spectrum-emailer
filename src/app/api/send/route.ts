@@ -7,6 +7,12 @@ import path from 'path';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+if (!process.env.RESEND_EMAIL_ACCT || !process.env.NEWSLETTER_EMAIL) {
+  throw new Error("missing defined variables");
+}
+const resendAcct: string = process.env.RESEND_EMAIL_ACCT;
+const newsletterEmailAdrs: string = process.env.NEWSLETTER_EMAIL;
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 type Subscriber = {
@@ -34,7 +40,6 @@ export async function POST(request: Request) {
 
         if (process.env.NODE_ENV === 'development') {
           // --- DEVELOPMENT MODE (with streaming) ---
-          const yourSignupEmail = 'ralph@spectrumdubai.com';
           const totalSubscribers = 5; // Simulate a list of 5 subscribers for the progress bar
 
           for (let count = 1; count <= totalSubscribers; count++) {
@@ -50,7 +55,7 @@ export async function POST(request: Request) {
           
           await resend.emails.send({
             from: 'onboarding@resend.dev',
-            to: yourSignupEmail,
+            to: resendAcct,
             subject: `[TEST ${entity}] ${subject}`,
             html: personalizedHtml,
           });
@@ -70,7 +75,7 @@ export async function POST(request: Request) {
           }
 
           const senderName = entity === 'All' ? 'Spectrum' : entity;
-          const fromAddress = `${senderName} Newsletter <newsletter@emailer.spectrumdubai.com>`;
+          const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
 
           let count = 0;
           for (const subscriber of subscribers) {
