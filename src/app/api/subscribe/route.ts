@@ -9,67 +9,116 @@ import {
   getDocs,
   Timestamp,
 } from 'firebase/firestore';
+import { Resend } from 'resend';
+import fs from 'fs/promises';
+import path from 'path';  
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+if (!process.env.RESEND_EMAIL_ACCT || !process.env.NEWSLETTER_EMAIL || !process.env.TURNSTILE_SECRET_KEY) {
+  throw new Error("Missing defined environment variables");
+}
+const resendAcct: string = process.env.RESEND_EMAIL_ACCT;
+const newsletterEmailAdrs: string = process.env.NEWSLETTER_EMAIL;
+const turnstileSecretKey: string = process.env.TURNSTILE_SECRET_KEY;
+
+async function verifyTurnstile(token: string) {
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret: turnstileSecretKey,
+      response: token,
+    }),
+  });
+  const data = await response.json();
+  return data.success;
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email } = body;
+    const { fullName, email, entity, token } = body;
+
+    if (!token || !(await verifyTurnstile(token))) {
+        return NextResponse.json({ message: "Invalid CAPTCHA response." }, { status: 403 });
+    }
 
     if (!fullName || !email) {
       return NextResponse.json({ message: 'Name and email are required.' }, { status: 400 });
     }
 
+    const currentEntity = entity || 'Spectrum';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+    const entityMap = {
+      TCC: 'The Card Co.',
+      Spectrum: 'Spectrum Sustainable Print',
+      HOS: 'House of Spectrum',
+      All: 'Spectrum Sustainable Print'
+    };
+    const entityText = entityMap[currentEntity as keyof typeof entityMap] || 'Spectrum Sustainable Print';
+    
+    const templatePath = path.join(process.cwd(), 'public', 'emails', 'welcome-subscribers.html');
+    let htmlBody = await fs.readFile(templatePath, 'utf8');
+    htmlBody = htmlBody.replace(/{{fullName}}/g, fullName);
+    htmlBody = htmlBody.replace(/{{entity}}/g, entityText);
+
     const subscribersRef = collection(db, 'subscribers');
     const q = query(subscribersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
+    let newSubscriber;
+    let message = '';
+    let status = 200;
+    let finalHtml = '';
+
     if (!querySnapshot.empty) {
       const existingDoc = querySnapshot.docs[0];
       const existingData = existingDoc.data();
-
       if (existingData.status === 'unsubscribed') {
-        await updateDoc(existingDoc.ref, {
-          status: 'subscribed',
-          updatedAt: Timestamp.now(),
-        });
-        
-        // Construct the full subscriber object to return
-        const reSubscribedUser = {
-            id: existingDoc.id,
-            fullName: existingData.fullName,
-            email: existingData.email,
-            status: 'subscribed',
-            createdAt: existingData.createdAt.toDate(), // Include createdAt
-        };
-
-        return NextResponse.json({ 
-            message: 'Welcome back! You have been re-subscribed.',
-            newSubscriber: reSubscribedUser
-        });
+        await updateDoc(existingDoc.ref, { status: 'subscribed', updatedAt: Timestamp.now() });
+        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${existingDoc.id}`;
+        finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
+        newSubscriber = { id: existingDoc.id, ...existingData, status: 'subscribed', createdAt: existingData.createdAt.toDate() };
+        message = 'Welcome back! You have been re-subscribed.';
       } else {
         return NextResponse.json({ message: 'This email is already subscribed.' }, { status: 409 });
       }
     } else {
       const newSubscriberData = {
-        fullName,
-        email,
-        status: 'subscribed' as 'subscribed' | 'unsubscribed',
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+        fullName, email, status: 'subscribed' as const,
+        createdAt: Timestamp.now(), updatedAt: Timestamp.now(),
       };
       const docRef = await addDoc(subscribersRef, newSubscriberData);
-
-      return NextResponse.json({ 
-        message: 'Subscription successful!',
-        newSubscriber: {
-          id: docRef.id,
-          fullName: newSubscriberData.fullName,
-          email: newSubscriberData.email,
-          status: newSubscriberData.status,
-          createdAt: newSubscriberData.createdAt.toDate()
-        }
-      }, { status: 201 });
+      const unsubscribeLink = `${baseUrl}/unsubscribe?id=${docRef.id}`;
+      finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
+      newSubscriber = { id: docRef.id, ...newSubscriberData, createdAt: newSubscriberData.createdAt.toDate() };
+      message = 'Success! You have been subscribed.';
+      status = 201;
     }
+
+    if (process.env.NODE_ENV === 'development') {
+      const testFinalHtml = finalHtml.replace(/{{unsubscribeLink}}/g, `${baseUrl}/unsubscribe?id=test-id`);
+      await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: resendAcct,
+          subject: message.includes('Welcome back') ? `Welcome Back! (Test)` : `Welcome! (Test)`,
+          html: testFinalHtml
+      });
+    } else {
+      const senderName = currentEntity === 'All' ? 'Spectrum' : currentEntity;
+      const fromAddress = `${senderName} <${newsletterEmailAdrs}>`;
+      await resend.emails.send({
+          from: fromAddress,
+          to: email,
+          subject: message.includes('Welcome back') ? 'Welcome Back!' : 'Welcome to Our Newsletter!',
+          html: finalHtml
+      });
+    }
+
+    return NextResponse.json({ message, newSubscriber }, { status });
+
   } catch (error) {
     console.error('Subscription API error:', error);
     return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });

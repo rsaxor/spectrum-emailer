@@ -21,9 +21,9 @@ export default function SideNav() {
   };
 
   const handleCopyLink = () => {
-    const subscribeUrl = `${window.location.origin}/subscribe`;
+    const subscribeUrl = `${window.location.origin}/subscribe?entity=${entity}`;
     navigator.clipboard.writeText(subscribeUrl);
-    toast.success('Subscriber link copied!');
+    toast.success(`${entity} subscriber link copied!`);
   };
 
   const navLinks = [
@@ -36,7 +36,7 @@ export default function SideNav() {
   const imageWidth = entity === 'All' ? 250 : 150;
   const imageHeight = entity === 'All' ? 80 : 50;
   const imageSrc = entity === 'All' ? '/all.png' : `/${entity.toLowerCase()}.png`;
-  const maxWidthClass = entity === 'All' ? 'max-w-[250px]' : 'max-w-[120px]'
+  const maxWidthClass = entity === 'All' ? 'max-w-[250px]' : 'max-w-[120px]';
 
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2 bg-gray-50 border-r dark:bg-gray-900 dark:border-gray-800">
@@ -68,7 +68,6 @@ export default function SideNav() {
               </Link>
             );
           })}
-          {/* Styled the button as a link for consistency */}
           <button
             onClick={handleCopyLink}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-900 transition-all hover:bg-gray-200 dark:text-gray-50 dark:hover:bg-gray-800 text-left"
