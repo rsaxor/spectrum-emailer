@@ -15,16 +15,34 @@ import path from 'path';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-if (!process.env.RESEND_EMAIL_ACCT || !process.env.NEWSLETTER_EMAIL) {
-  throw new Error("missing defined variables");
+if (!process.env.RESEND_EMAIL_ACCT || !process.env.NEWSLETTER_EMAIL || !process.env.TURNSTILE_SECRET_KEY) {
+  throw new Error("Missing defined environment variables");
 }
 const resendAcct: string = process.env.RESEND_EMAIL_ACCT;
 const newsletterEmailAdrs: string = process.env.NEWSLETTER_EMAIL;
+const turnstileSecretKey: string = process.env.TURNSTILE_SECRET_KEY;
+
+async function verifyTurnstile(token: string) {
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret: turnstileSecretKey,
+      response: token,
+    }),
+  });
+  const data = await response.json();
+  return data.success;
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email, entity } = body;
+    const { fullName, email, entity, token } = body;
+
+    if (!token || !(await verifyTurnstile(token))) {
+        return NextResponse.json({ message: "Invalid CAPTCHA response." }, { status: 403 });
+    }
 
     if (!fullName || !email) {
       return NextResponse.json({ message: 'Name and email are required.' }, { status: 400 });
@@ -55,16 +73,13 @@ export async function POST(request: Request) {
     let status = 200;
     let finalHtml = '';
 
-    // --- DATABASE LOGIC (runs in both dev and prod) ---
     if (!querySnapshot.empty) {
       const existingDoc = querySnapshot.docs[0];
       const existingData = existingDoc.data();
       if (existingData.status === 'unsubscribed') {
         await updateDoc(existingDoc.ref, { status: 'subscribed', updatedAt: Timestamp.now() });
-        
         const unsubscribeLink = `${baseUrl}/unsubscribe?id=${existingDoc.id}`;
         finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
-        
         newSubscriber = { id: existingDoc.id, ...existingData, status: 'subscribed', createdAt: existingData.createdAt.toDate() };
         message = 'Welcome back! You have been re-subscribed.';
       } else {
@@ -76,23 +91,19 @@ export async function POST(request: Request) {
         createdAt: Timestamp.now(), updatedAt: Timestamp.now(),
       };
       const docRef = await addDoc(subscribersRef, newSubscriberData);
-      
       const unsubscribeLink = `${baseUrl}/unsubscribe?id=${docRef.id}`;
       finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
-      
       newSubscriber = { id: docRef.id, ...newSubscriberData, createdAt: newSubscriberData.createdAt.toDate() };
       message = 'Success! You have been subscribed.';
       status = 201;
     }
 
-    // --- EMAIL SENDING LOGIC (switches based on environment) ---
     if (process.env.NODE_ENV === 'development') {
-      const testUnsubscribeLink = `${baseUrl}/unsubscribe?id=test-id`;
-      const testFinalHtml = finalHtml.replace(/{{unsubscribeLink}}/g, testUnsubscribeLink);
+      const testFinalHtml = finalHtml.replace(/{{unsubscribeLink}}/g, `${baseUrl}/unsubscribe?id=test-id`);
       await resend.emails.send({
           from: 'onboarding@resend.dev',
           to: resendAcct,
-          subject: message.includes('Welcome back') ? `Welcome Back! (Local test for ${currentEntity})` : `Welcome to Our Newsletter!(Local test for ${currentEntity})`,
+          subject: message.includes('Welcome back') ? `Welcome Back! (Test)` : `Welcome! (Test)`,
           html: testFinalHtml
       });
     } else {
