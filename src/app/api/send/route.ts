@@ -52,6 +52,7 @@ export async function POST(request: Request) {
           const testUnsubscribeLink = `${baseUrl}/unsubscribe?id=test-id`;
           let personalizedHtml = htmlBody.replace('{{fullName}}', 'Test User');
           personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', testUnsubscribeLink);
+          personalizedHtml = personalizedHtml.replace('{{host}}', baseUrl);
           
           await resend.emails.send({
             from: 'onboarding@resend.dev',
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
             const unsubscribeLink = `${baseUrl}/unsubscribe?id=${subscriber.id}`;
             let personalizedHtml = htmlBody.replace('{{fullName}}', subscriber.fullName);
             personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', unsubscribeLink);
+            personalizedHtml = personalizedHtml.replace('{{host}}', baseUrl);
 
             await resend.emails.send({
               from: fromAddress,
