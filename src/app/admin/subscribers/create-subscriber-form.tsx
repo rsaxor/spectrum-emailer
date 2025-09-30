@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Subscriber } from "@/lib/subscriber.service";
 import Turnstile from "react-turnstile";
+import { useEntity } from "@/context/EntityContext";
 
 // Correct the type definition for the props here
 interface CreateSubscriberFormProps {
@@ -23,6 +24,7 @@ export function CreateSubscriberForm({
 	const [email, setEmail] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [token, setToken] = useState<string | null>(null);
+	const { entity } = useEntity(); // Get the current entity
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -36,7 +38,7 @@ export function CreateSubscriberForm({
 			const response = await fetch("/api/subscribe", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ fullName, email, token }),
+				body: JSON.stringify({ fullName, email, token, entity }),
 			});
 
 			const data = await response.json();
