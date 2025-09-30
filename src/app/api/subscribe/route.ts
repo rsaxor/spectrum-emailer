@@ -13,7 +13,7 @@ import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';  
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY!);
 
 if (!process.env.RESEND_EMAIL_ACCT || !process.env.NEWSLETTER_EMAIL || !process.env.TURNSTILE_SECRET_KEY) {
   throw new Error("Missing defined environment variables");
