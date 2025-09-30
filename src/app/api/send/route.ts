@@ -37,6 +37,9 @@ export async function POST(request: Request) {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         const templatePath = path.join(process.cwd(), 'public', 'emails', templateName);
         const htmlBody = await fs.readFile(templatePath, 'utf8');
+        const liveUrl = baseUrl === 'https://emailer.spectrumdubai.com' ? baseUrl! : process.env.LIVE_URL!;
+        const resubscribeLink = `${baseUrl}/subscribe`;
+
 
         if (process.env.NODE_ENV === 'development') {
           // --- DEVELOPMENT MODE (with streaming) ---
@@ -49,10 +52,11 @@ export async function POST(request: Request) {
           }
 
           // Send one final, actual email at the end of the simulation
-          const testUnsubscribeLink = `${baseUrl}/unsubscribe?id=test-id`;
-          let personalizedHtml = htmlBody.replace('{{fullName}}', 'Test User');
-          personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', testUnsubscribeLink);
-          personalizedHtml = personalizedHtml.replace('{{host}}', baseUrl);
+          const testUnsubscribeLink = `${liveUrl}/unsubscribe?id=test-id`;
+          let personalizedHtml = htmlBody.replace(/{{fullName}}/g, 'Test User');
+          personalizedHtml = personalizedHtml.replace(/{{unsubscribeLink}}/g, testUnsubscribeLink);
+          personalizedHtml = htmlBody.replace(/{{resubscribe}}/g, resubscribeLink);
+          personalizedHtml = personalizedHtml.replace(/{{host}}/g, liveUrl);
           
           await resend.emails.send({
             from: 'onboarding@resend.dev',
@@ -80,10 +84,11 @@ export async function POST(request: Request) {
 
           let count = 0;
           for (const subscriber of subscribers) {
-            const unsubscribeLink = `${baseUrl}/unsubscribe?id=${subscriber.id}`;
-            let personalizedHtml = htmlBody.replace('{{fullName}}', subscriber.fullName);
-            personalizedHtml = personalizedHtml.replace('{{unsubscribeLink}}', unsubscribeLink);
-            personalizedHtml = personalizedHtml.replace('{{host}}', baseUrl);
+            const unsubscribeLink = `${liveUrl}/unsubscribe?id=${subscriber.id}`;
+            let personalizedHtml = htmlBody.replace(/{{fullName}}/g, subscriber.fullName);
+            personalizedHtml = personalizedHtml.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
+            personalizedHtml = htmlBody.replace(/{{resubscribe}}/g, resubscribeLink);
+            personalizedHtml = personalizedHtml.replace(/{{host}}/g, liveUrl);
 
             await resend.emails.send({
               from: fromAddress,
