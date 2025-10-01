@@ -25,7 +25,7 @@ export type Subscriber = {
 };
 
 // Function to get only the count
-export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed') {
+export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed' | 'pending') {
   const subscribersCollectionRef = collection(db, 'subscribers');
   let q;
   if (status) {
@@ -39,7 +39,7 @@ export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed'
 
 // Updated function to handle dynamic sorting
 export async function getSubscribersPaginated(
-  status?: 'subscribed' | 'unsubscribed',
+  status?: 'subscribed' | 'unsubscribed' | 'pending',
   lastVisible?: QueryDocumentSnapshot<DocumentData>,
   limitSize: number = 10,
   sortBy: string = 'createdAt', // Default sort

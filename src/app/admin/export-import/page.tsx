@@ -65,7 +65,7 @@ export default function ExportImportPage() {
                 if (json.error) {
                     toast.error(json.message, { id: toastId, duration: 10000 });
                 } else if (json.done) {
-                  toast.success(`Success: ${json.success} | Skipped: ${json.skipped}`, {
+                  toast.success(`Added: ${json.success} | Updated: ${json.updated} | Skipped: ${json.skipped}`, {
                     id: toastId,
                     duration: 10000,
                   });
@@ -110,7 +110,7 @@ export default function ExportImportPage() {
           <CardHeader>
             <CardTitle>Import Subscribers</CardTitle>
             <CardDescription>
-              Upload a CSV file with `fullName` and `email` columns.
+              Upload a CSV file with `fullName`, `email`, and `status` columns.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -25,6 +25,7 @@ export function FilterTabs() {
       <Button variant={currentStatus === 'all' ? 'default' : 'outline'} onClick={() => handleFilterClick('all')}>All</Button>
       <Button variant={currentStatus === 'subscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('subscribed')}>Subscribed</Button>
       <Button variant={currentStatus === 'unsubscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('unsubscribed')}>Unsubscribed</Button>
+      <Button variant={currentStatus === 'pending' ? 'default' : 'outline'} onClick={() => handleFilterClick('pending')}>Pending</Button>
     </div>
   );
 }

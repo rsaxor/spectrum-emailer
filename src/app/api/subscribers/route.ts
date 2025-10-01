@@ -6,7 +6,7 @@ import { doc, writeBatch } from 'firebase/firestore';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | undefined;
+    const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | 'pending' |undefined;
 
     const { subscribers } = await getSubscribersPaginated(status);
 
