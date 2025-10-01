@@ -18,7 +18,7 @@ export function useDataTable() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | undefined;
+  const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | 'pending' | undefined;
   const currentPage = Number(searchParams.get('page')) || 1;
   const sortBy = searchParams.get('sortBy') || 'createdAt';
   const order = searchParams.get('order') || 'desc';
