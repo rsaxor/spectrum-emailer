@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDataTable } from "@/hooks/use-data-table";
 import { toast } from "sonner";
@@ -18,9 +18,14 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
-import { Subscriber } from "@/lib/subscriber.service";
+import { getSubscriberCounts, Subscriber } from "@/lib/subscriber.service";
 
 export function SubscribersView() {
+	const [counts, setCounts] = useState({
+		subscribedCount: 0,
+		unsubscribedCount: 0,
+		pendingCount: 0,
+	});
 	const [isSelectMode, setIsSelectMode] = useState(false);
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);
 	const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
@@ -39,7 +44,7 @@ export function SubscribersView() {
 		isClient,
 		handlePageChange,
 		handleSortChange,
-		handleSuccess,
+        handleSuccess: handleSuccessFromHook,
 	} = useDataTable();
 
 	const handleSelect = (id: string) => {
@@ -62,6 +67,11 @@ export function SubscribersView() {
 		}
 	};
 
+	const handleSuccess = (newSubscriber: Subscriber) => {
+        handleSuccessFromHook(newSubscriber);
+        router.refresh();
+    };
+
 	const performDelete = async (ids: string[]) => {
 		const deletePromise = fetch("/api/subscribers", {
 			method: "DELETE",
@@ -75,13 +85,13 @@ export function SubscribersView() {
 		toast.promise(deletePromise, {
 			loading: "Deleting...",
 			success: () => {
-				handlePageChange(1);
+                handlePageChange(1); 
 				setIsSelectMode(false);
 				setSelectedIds([]);
 				return `${ids.length} subscriber(s) deleted.`;
 			},
 			error: (err) => {
-				setIsLoading(false); // Make sure to stop loading on error
+				setIsLoading(false);
 				return "Failed to delete subscribers.";
 			},
 		});
@@ -100,7 +110,7 @@ export function SubscribersView() {
 		toast.promise(deleteAllPromise, {
 			loading: "Deleting all subscribers...",
 			success: () => {
-				handlePageChange(1);
+                handlePageChange(1);
 				return "All subscribers have been deleted.";
 			},
 			error: "An error occurred while deleting all subscribers.",
@@ -113,6 +123,12 @@ export function SubscribersView() {
 		setIsSelectMode(true);
 		setSelectedIds([id]);
 	};
+
+	useEffect(() => {
+		if (!isClient) return;
+		// Fetch the counts when the component mounts or filters change
+		getSubscriberCounts().then(setCounts);
+	}, [isClient, subscribers]); // Re-fetch counts if the filter status / subscribers changes
 
 	if (!isClient) {
 		return <div>Loading...</div>;
@@ -132,7 +148,7 @@ export function SubscribersView() {
 				onProceedDelete={handleProceedDelete}
 				isDeleting={isLoading}
 			/>
-			<FilterTabs />
+			<FilterTabs counts={counts} />
 			<SubscribersTable
 				subscribers={subscribers}
 				isLoading={isLoading}

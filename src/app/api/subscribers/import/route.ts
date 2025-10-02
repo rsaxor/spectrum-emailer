@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, writeBatch, Timestamp, query, where, getDocs, doc } from 'firebase/firestore';
+import { collection, writeBatch, Timestamp, query, where, getDocs, doc, runTransaction, increment } from 'firebase/firestore';
 import Papa from 'papaparse';
 import { z } from 'zod';
 
@@ -64,6 +64,11 @@ export async function POST(request: Request) {
           let skippedCount = 0;
           let batchCounter = 0;
 
+          // Track counter changes
+          let subscribedDelta = 0;
+          let unsubscribedDelta = 0;
+          let pendingDelta = 0;
+
           for (let i = 0; i < totalRows; i++) {
             const subscriber = subscribersFromCsv[i];
             
@@ -73,7 +78,7 @@ export async function POST(request: Request) {
             const existing = existingSubscribers.get(subscriber.email);
 
             if (existing) {
-              if (existing.data.fullName !== subscriber.fullName || existing.data.status !== subscriber.status) {
+              if (existing.data.status !== subscriber.status) {
                 const docRef = doc(db, 'subscribers', existing.id);
                 batch.update(docRef, { 
                     fullName: subscriber.fullName, 
@@ -82,8 +87,16 @@ export async function POST(request: Request) {
                 });
                 updatedCount++;
                 batchCounter++;
+                // Update deltas based on status change
+                if(subscriber.status === 'subscribed') subscribedDelta++;
+                if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
+                if(subscriber.status === 'pending') pendingDelta++;
+                
+                if(existing.data.status === 'subscribed') subscribedDelta--;
+                if(existing.data.status === 'unsubscribed') unsubscribedDelta--;
+                if(existing.data.status === 'pending') pendingDelta--;
               } else {
-                skippedCount++; // Increment skipped if no update is needed
+                skippedCount++;
               }
             } else {
               const docRef = doc(subscribersRef);
@@ -94,6 +107,10 @@ export async function POST(request: Request) {
               });
               successCount++;
               batchCounter++;
+              // Update deltas for new subscriber
+              if(subscriber.status === 'subscribed') subscribedDelta++;
+              if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
+              if(subscriber.status === 'pending') pendingDelta++;
             }
 
             if (batchCounter >= 499) {
@@ -106,6 +123,16 @@ export async function POST(request: Request) {
           if (batchCounter > 0) {
             await batch.commit();
           }
+
+          // --- RUN TRANSACTION TO UPDATE METADATA ---
+          await runTransaction(db, async (transaction) => {
+            const metadataRef = doc(db, 'metadata', 'subscribers');
+            transaction.update(metadataRef, {
+                subscribedCount: increment(subscribedDelta),
+                unsubscribedCount: increment(unsubscribedDelta),
+                pendingCount: increment(pendingDelta)
+            });
+          });
 
           const finalMessage = `data: {"message": "Import complete!", "success": ${successCount}, "updated": ${updatedCount}, "skipped": ${skippedCount}, "done": true}\n\n`;
           controller.enqueue(encoder.encode(finalMessage));

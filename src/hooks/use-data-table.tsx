@@ -99,13 +99,19 @@ export function useDataTable() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const handleSuccess = () => {
-    setIsLoading(true);
-    setIsCountLoading(true);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', '1');
-    params.set('refreshId', Math.random().toString());
-    router.push(`${pathname}?${params.toString()}`);
+  const handleSuccess = (newSubscriber: Subscriber) => {
+    // Instantly update the UI by adding the new item to the list
+    setSubscribers(prev => {
+        const newList = [newSubscriber, ...prev];
+        if (newList.length > PAGE_SIZE) {
+            newList.pop();
+        }
+        return newList;
+    });
+    // Re-fetch the total count to update pagination if necessary
+    getSubscribersCount(status).then(count => {
+        setPageCount(Math.ceil(count / PAGE_SIZE));
+    });
   };
 
   return {

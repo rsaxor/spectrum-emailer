@@ -3,7 +3,15 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-export function FilterTabs() {
+interface FilterTabsProps {
+  counts: {
+    subscribedCount: number;
+    unsubscribedCount: number;
+    pendingCount: number;
+  };
+}
+
+export function FilterTabs({ counts }: FilterTabsProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -20,12 +28,22 @@ export function FilterTabs() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const totalCount = counts.subscribedCount + counts.unsubscribedCount + counts.pendingCount;
+
   return (
     <div className="flex gap-2 mb-4">
-      <Button variant={currentStatus === 'all' ? 'default' : 'outline'} onClick={() => handleFilterClick('all')}>All</Button>
-      <Button variant={currentStatus === 'subscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('subscribed')}>Subscribed</Button>
-      <Button variant={currentStatus === 'unsubscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('unsubscribed')}>Unsubscribed</Button>
-      <Button variant={currentStatus === 'pending' ? 'default' : 'outline'} onClick={() => handleFilterClick('pending')}>Pending</Button>
+      <Button variant={currentStatus === 'all' ? 'default' : 'outline'} onClick={() => handleFilterClick('all')}>
+        All <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{totalCount}</span>
+      </Button>
+      <Button variant={currentStatus === 'subscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('subscribed')}>
+        Subscribed <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{counts.subscribedCount}</span>
+      </Button>
+      <Button variant={currentStatus === 'unsubscribed' ? 'default' : 'outline'} onClick={() => handleFilterClick('unsubscribed')}>
+        Unsubscribed <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{counts.unsubscribedCount}</span>
+      </Button>
+      <Button variant={currentStatus === 'pending' ? 'default' : 'outline'} onClick={() => handleFilterClick('pending')}>
+        Pending <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{counts.pendingCount}</span>
+      </Button>
     </div>
   );
 }

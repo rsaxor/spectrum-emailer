@@ -135,3 +135,20 @@ export async function getSubscriberById(id: string): Promise<Subscriber | null> 
     return null;
   }
 }
+
+// Function to get all counts
+export async function getSubscriberCounts() {
+  const metadataRef = doc(db, 'metadata', 'subscribers');
+  const docSnap = await getDoc(metadataRef);
+  
+  if (!docSnap.exists()) {
+    return { subscribedCount: 0, unsubscribedCount: 0, pendingCount: 0 };
+  }
+  
+  const data = docSnap.data();
+  return {
+    subscribedCount: data.subscribedCount || 0,
+    unsubscribedCount: data.unsubscribedCount || 0,
+    pendingCount: data.pendingCount || 0,
+  };
+}
