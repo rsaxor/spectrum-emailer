@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, doc, runTransaction } from 'firebase/firestore';
 
 export async function DELETE() {
   try {
@@ -11,13 +11,18 @@ export async function DELETE() {
       return NextResponse.json({ message: 'No subscribers to delete.' });
     }
 
-    // Firestore can only delete up to 500 documents in a single batch
-    const batch = writeBatch(db);
-    querySnapshot.docs.forEach(doc => {
-      batch.delete(doc.ref);
-    });
+    await runTransaction(db, async (transaction) => {
+      querySnapshot.docs.forEach(doc => {
+        transaction.delete(doc.ref);
+      });
 
-    await batch.commit();
+      const metadataRef = doc(db, 'metadata', 'subscribers');
+      transaction.set(metadataRef, { 
+        subscribedCount: 0, 
+        unsubscribedCount: 0,
+        pendingCount: 0
+      });
+    });
 
     return NextResponse.json({ message: 'All subscribers have been deleted.' });
   } catch (error) {

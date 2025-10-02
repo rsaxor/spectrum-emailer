@@ -1,14 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from 'firebase/firestore';
+import { collection, addDoc, updateDoc, query, where, getDocs, Timestamp, doc, increment, runTransaction } from 'firebase/firestore';
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';  
@@ -77,6 +69,11 @@ export async function POST(request: Request) {
       const existingDoc = querySnapshot.docs[0];
       const existingData = existingDoc.data();
       if (existingData.status === 'unsubscribed') {
+        await runTransaction(db, async (transaction) => {
+          const metadataRef = doc(db, 'metadata', 'subscribers');
+          transaction.update(existingDoc.ref, { status: 'subscribed', updatedAt: Timestamp.now(), entity: currentEntity });
+          transaction.update(metadataRef, { subscribedCount: increment(1), unsubscribedCount: increment(-1) });
+        });
         await updateDoc(existingDoc.ref, { status: 'subscribed', updatedAt: Timestamp.now() });
         const unsubscribeLink = `${baseUrl}/unsubscribe?id=${existingDoc.id}`;
         finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
@@ -90,7 +87,15 @@ export async function POST(request: Request) {
         fullName, email, status: 'subscribed' as const,
         createdAt: Timestamp.now(), updatedAt: Timestamp.now(),
       };
+      
       const docRef = await addDoc(subscribersRef, newSubscriberData);
+
+      await runTransaction(db, async (transaction) => {
+        transaction.set(docRef, newSubscriberData);
+        const metadataRef = doc(db, 'metadata', 'subscribers');
+        transaction.update(metadataRef, { subscribedCount: increment(1) });
+      });
+      
       const unsubscribeLink = `${baseUrl}/unsubscribe?id=${docRef.id}`;
       finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
       newSubscriber = { id: docRef.id, ...newSubscriberData, createdAt: newSubscriberData.createdAt.toDate() };

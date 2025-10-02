@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, Timestamp, runTransaction, increment } from 'firebase/firestore';
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';
@@ -30,9 +30,17 @@ export async function POST(request: Request) {
     }
     const subscriberData = docSnap.data();
 
-    await updateDoc(subscriberRef, {
-      status: 'unsubscribed',
-      updatedAt: Timestamp.now(),
+    // await updateDoc(subscriberRef, {
+    //   status: 'unsubscribed',
+    //   updatedAt: Timestamp.now(),
+    // });
+    await runTransaction(db, async (transaction) => {
+        const metadataRef = doc(db, 'metadata', 'subscribers');
+        transaction.update(subscriberRef, { status: 'unsubscribed', updatedAt: Timestamp.now() });
+        transaction.update(metadataRef, { 
+            subscribedCount: increment(-1),
+            unsubscribedCount: increment(1) 
+        });
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

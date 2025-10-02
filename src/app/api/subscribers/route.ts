@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { getSubscribersPaginated } from '@/lib/subscriber.service';
-import { doc, writeBatch } from 'firebase/firestore';
+import { doc, runTransaction, getDoc, increment } from 'firebase/firestore';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | 'pending' |undefined;
+    const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | 'pending' | undefined;
 
     const { subscribers } = await getSubscribersPaginated(status);
 
@@ -26,13 +26,37 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ message: 'Subscriber IDs are required.' }, { status: 400 });
     }
 
-    const batch = writeBatch(db);
-    ids.forEach((id: string) => {
-      const docRef = doc(db, 'subscribers', id);
-      batch.delete(docRef);
-    });
+    await runTransaction(db, async (transaction) => {
+      let subscribedToDelete = 0;
+      let unsubscribedToDelete = 0;
+      let pendingToDelete = 0;
 
-    await batch.commit();
+      // First, get all the documents to check their status before deleting
+      for (const id of ids) {
+        const docRef = doc(db, 'subscribers', id);
+        const docSnap = await transaction.get(docRef);
+        if (docSnap.exists()) {
+          const status = docSnap.data().status;
+          if (status === 'subscribed') subscribedToDelete++;
+          else if (status === 'unsubscribed') unsubscribedToDelete++;
+          else if (status === 'pending') pendingToDelete++;
+        }
+      }
+
+      // Now, perform all the deletes
+      ids.forEach((id: string) => {
+        const docRef = doc(db, 'subscribers', id);
+        transaction.delete(docRef);
+      });
+
+      // Finally, update the metadata counters
+      const metadataRef = doc(db, 'metadata', 'subscribers');
+      transaction.update(metadataRef, {
+        subscribedCount: increment(-subscribedToDelete),
+        unsubscribedCount: increment(-unsubscribedToDelete),
+        pendingCount: increment(-pendingToDelete),
+      });
+    });
 
     return NextResponse.json({ message: 'Subscribers deleted successfully.' });
 
