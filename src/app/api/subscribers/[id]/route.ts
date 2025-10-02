@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, Timestamp, runTransaction, increment } from 'firebase/firestore';
+import { doc, getDoc, Timestamp, runTransaction, increment, FieldValue } from 'firebase/firestore';
 
 export async function GET(
   request: Request,
@@ -44,12 +44,6 @@ export async function PUT(
 
     const docRef = doc(db, 'subscribers', id);
 
-    // await updateDoc(docRef, {
-    //   fullName,
-    //   status,
-    //   updatedAt: Timestamp.now(),
-    // });
-
     await runTransaction(db, async (transaction) => {
         const docSnap = await transaction.get(docRef);
         if (!docSnap.exists()) throw new Error("Document does not exist!");
@@ -58,7 +52,7 @@ export async function PUT(
         // Only update counters if the status has actually changed
         if (oldStatus !== status) {
             const metadataRef = doc(db, 'metadata', 'subscribers');
-            const updateData: { [key: string]: any } = {};
+            const updateData: Record<string, FieldValue> = {};
             if (status === 'subscribed') {
                 updateData.subscribedCount = increment(1);
                 updateData.unsubscribedCount = increment(-1);

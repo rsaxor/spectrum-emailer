@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, writeBatch, Timestamp, query, where, getDocs, doc, runTransaction, increment } from 'firebase/firestore';
+import { collection, writeBatch, Timestamp, query, where, getDocs, doc, runTransaction, increment, DocumentData } from 'firebase/firestore';
 import Papa from 'papaparse';
 import { z } from 'zod';
+
+type ExistingSubscriber = { id: string; data: DocumentData };
 
 const subscriberSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters."),
@@ -50,7 +52,7 @@ export async function POST(request: Request) {
           const subscribersRef = collection(db, 'subscribers');
           
           const emailChunks = chunkArray(subscribersFromCsv.map(s => s.email), 30);
-          const existingSubscribers = new Map<string, { id: string, data: any }>();
+          const existingSubscribers = new Map<string, ExistingSubscriber>();
           for (const chunk of emailChunks) {
               if (chunk.length === 0) continue;
               const q = query(subscribersRef, where('email', 'in', chunk));
