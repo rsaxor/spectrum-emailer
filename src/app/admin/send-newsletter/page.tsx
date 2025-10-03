@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
@@ -82,6 +83,7 @@ export default function SendNewsletterPage() {
     null
   );
   const [subject, setSubject] = useState("");
+  const [sendStatus, setSendStatus] = useState("subscribed");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const router = useRouter();
@@ -157,6 +159,7 @@ export default function SendNewsletterPage() {
         templateName: selectedTemplate,
         subject: subject,
         entity: entity,
+        sendStatus: sendStatus
       }),
     }).then(response => {
       const reader = response.body?.getReader();
@@ -337,6 +340,17 @@ export default function SendNewsletterPage() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="grid gap-2 pb-4">
+              <Label htmlFor="status">Send to:</Label>
+              <Select value={sendStatus} onValueChange={setSendStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="subscribed">Subscribed list</SelectItem>
+                  <SelectItem value="unsubscribed">Unsubscribed list</SelectItem>
+                  <SelectItem value="pending">Pending list</SelectItem>
+                </SelectContent>
+              </Select>
               <Label htmlFor="subject">Subject</Label>
               <Input
                 id="subject"

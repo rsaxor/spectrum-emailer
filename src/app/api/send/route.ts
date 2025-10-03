@@ -23,9 +23,9 @@ type Subscriber = {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { templateName, subject, entity } = body;
+  const { templateName, subject, entity, sendStatus } = body;
 
-  if (!templateName || !subject || !entity) {
+  if (!templateName || !subject || !entity || !sendStatus) {
     // A non-streaming response for initial validation failure
     return NextResponse.json({ message: 'All fields are required.' }, { status: 400 });
   }
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         } else {
           // --- PRODUCTION MODE (with streaming) ---
           const subscribersRef = collection(db, 'subscribers');
-          const q = query(subscribersRef, where('status', '==', 'subscribed'));
+          const q = query(subscribersRef, where('status', '==', sendStatus));
           const querySnapshot = await getDocs(q);
           const subscribers: Subscriber[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Subscriber[];
           const totalSubscribers = subscribers.length;
