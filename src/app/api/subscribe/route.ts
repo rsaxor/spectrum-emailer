@@ -40,21 +40,41 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Name and email are required.' }, { status: 400 });
     }
 
-    const currentEntity = entity || 'Spectrum';
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    type EntityKey = keyof typeof entities;
 
-    const entityMap = {
-      TCC: 'The Card Co.',
-      Spectrum: 'Spectrum Sustainable Print',
-      HOS: 'House of Spectrum',
-      All: 'Spectrum Sustainable Print'
-    };
-    const entityText = entityMap[currentEntity as keyof typeof entityMap] || 'Spectrum Sustainable Print';
-    
-    const templatePath = path.join(process.cwd(), 'public', 'emails', 'welcome-subscribers.html');
+    const entities = {
+      TCC: {
+        text: 'The Card Co.',
+        img: 'tcc.png',
+      },
+      Spectrum: {
+        text: 'Spectrum Sustainable Print',
+        img: 'spectrum.png',
+      },
+      HOS: {
+        text: 'House of Spectrum',
+        img: 'hos.png',
+      },
+      All: {
+        text: 'Spectrum Sustainable Print',
+        img: 'all.png',
+      },
+    } as const;
+
+    const fallbackEntity: EntityKey = 'Spectrum';
+    const currentEntity: EntityKey = (entity && (entity in entities ? entity : fallbackEntity)) as EntityKey;
+    const { text: entityText, img: entityImgFile } = entities[currentEntity];
+
+    const templatePath = path.join(process.cwd(), 'public', 'emails', 'spec0002.html');
     let htmlBody = await fs.readFile(templatePath, 'utf8');
-    htmlBody = htmlBody.replace(/{{fullName}}/g, fullName);
-    htmlBody = htmlBody.replace(/{{entity}}/g, entityText);
+
+    htmlBody = htmlBody
+      .replace(/{{fullName}}/g, fullName)
+      .replace(/{{entity}}/g, entityText)
+      .replace(/{{entityImg}}/g, entityImgFile)
+      .replace(/{{host}}/g, baseUrl);
+
 
     const subscribersRef = collection(db, 'subscribers');
     const q = query(subscribersRef, where('email', '==', email));
@@ -75,7 +95,7 @@ export async function POST(request: Request) {
           transaction.update(metadataRef, { subscribedCount: increment(1), unsubscribedCount: increment(-1) });
         });
         await updateDoc(existingDoc.ref, { status: 'subscribed', updatedAt: Timestamp.now() });
-        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${existingDoc.id}`;
+        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${existingDoc.id}&entity=${entity}`;
         finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
         newSubscriber = { id: existingDoc.id, ...existingData, status: 'subscribed', createdAt: existingData.createdAt.toDate() };
         message = 'Welcome back! You have been re-subscribed.';
@@ -96,7 +116,7 @@ export async function POST(request: Request) {
         transaction.update(metadataRef, { subscribedCount: increment(1) });
       });
       
-      const unsubscribeLink = `${baseUrl}/unsubscribe?id=${docRef.id}`;
+      const unsubscribeLink = `${baseUrl}/unsubscribe?id=${docRef.id}&entity=${entity}`;
       finalHtml = htmlBody.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
       newSubscriber = { id: docRef.id, ...newSubscriberData, createdAt: newSubscriberData.createdAt.toDate() };
       message = 'Success! You have been subscribed.';
@@ -104,7 +124,7 @@ export async function POST(request: Request) {
     }
 
     if (process.env.NODE_ENV === 'development') {
-      const testFinalHtml = finalHtml.replace(/{{unsubscribeLink}}/g, `${baseUrl}/unsubscribe?id=test-id`);
+      const testFinalHtml = finalHtml.replace(/{{unsubscribeLink}}/g, `${baseUrl}/unsubscribe?id=test-id&entity=${entity}`);
       await resend.emails.send({
           from: 'onboarding@resend.dev',
           to: resendAcct,

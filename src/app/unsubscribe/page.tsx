@@ -13,13 +13,22 @@ import {
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
-// A wrapper component to use useSearchParams
 function UnsubscribeContent() {
 	const searchParams = useSearchParams();
-	const id = searchParams.get("id"); // Get the 'id' from the URL (e.g., /unsubscribe?id=...)
+	const id = searchParams.get("id");
+  	const entity = searchParams.get('entity') || 'Spectrum';
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState("");
+
+	const entityMap = {
+		TCC: { alt: "The Card Co.", img: "/tcc.png", width: 80, height:32 },
+		Spectrum: { alt: "Spectrum Sustainable Print", img: "/spectrum.png", width: 80, height:32 },
+		HOS: { alt: "House of Spectrum", img: "/hos.png", width: 80, height:32 },
+		All: { alt: "Spectrum Sustainable Print", img: "/all.png", width: 250, height:150 },
+	} as const;
+
+	const { alt, img, width, height } = entityMap[entity as keyof typeof entityMap] ?? entityMap.Spectrum;
 
 	const handleUnsubscribe = async () => {
 		if (!id) {
@@ -33,7 +42,7 @@ function UnsubscribeContent() {
 		const response = await fetch("/api/unsubscribe", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ id }),
+			body: JSON.stringify({ id, entity }),
 		});
 
 		const data = await response.json();
@@ -59,28 +68,14 @@ function UnsubscribeContent() {
 			<CardHeader>
 				<div className="flex items-center justify-center gap-6">
 					<Image
-						src="/spectrum.png"
-						alt="Spectrum Logo"
-						width={80}
-						height={32}
-						className="object-contain"
-					/>
-					<Image
-						src="/tcc.png"
-						alt="TCC Logo"
-						width={80}
-						height={32}
-						className="object-contain"
-					/>
-					<Image
-						src="/hos.png"
-						alt="HOS Logo"
-						width={80}
-						height={32}
+						src={img}
+						alt={`${alt} Logo`}
+						width={width}
+						height={height}
 						className="object-contain"
 					/>
 				</div>
-				<CardTitle className="mt-4 text-center text-2xl">
+				<CardTitle className="mt-1 text-center text-2xl">
 					Unsubscribe
 				</CardTitle>
 				<CardDescription className="text-center">

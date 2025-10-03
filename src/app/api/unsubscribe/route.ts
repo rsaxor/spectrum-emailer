@@ -16,7 +16,7 @@ const newsletterEmailAdrs: string = process.env.NEWSLETTER_EMAIL;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { id } = body;
+    const { id, entity } = body;
 
     if (!id) {
       return NextResponse.json({ message: 'Subscriber ID is required.' }, { status: 400 });
@@ -30,10 +30,6 @@ export async function POST(request: Request) {
     }
     const subscriberData = docSnap.data();
 
-    // await updateDoc(subscriberRef, {
-    //   status: 'unsubscribed',
-    //   updatedAt: Timestamp.now(),
-    // });
     await runTransaction(db, async (transaction) => {
         const metadataRef = doc(db, 'metadata', 'subscribers');
         transaction.update(subscriberRef, { status: 'unsubscribed', updatedAt: Timestamp.now() });
@@ -44,12 +40,41 @@ export async function POST(request: Request) {
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const resubscribeLink = `${baseUrl}/subscribe?entity=${subscriberData.entity || 'Spectrum'}`;
+    type EntityKey = keyof typeof entities;
+
+    const entities = {
+      TCC: {
+        text: 'The Card Co.',
+        img: 'tcc.png',
+      },
+      Spectrum: {
+        text: 'Spectrum Sustainable Print',
+        img: 'spectrum.png',
+      },
+      HOS: {
+        text: 'House of Spectrum',
+        img: 'hos.png',
+      },
+      All: {
+        text: 'Spectrum Sustainable Print',
+        img: 'all.png',
+      },
+    } as const;
+
+    const fallbackEntity: EntityKey = 'Spectrum';
+    const currentEntity: EntityKey = (entity && (entity in entities ? entity : fallbackEntity)) as EntityKey;
+    const { text: entityText, img: entityImgFile } = entities[currentEntity];
+
+    const resubscribeLink = `${baseUrl}/subscribe?entity=${entity || 'Spectrum'}`;
 
     const templatePath = path.join(process.cwd(), 'public', 'emails', 'goodbye-unsubscribe.html');
     let htmlBody = await fs.readFile(templatePath, 'utf8');
-    htmlBody = htmlBody.replace(/{{fullName}}/g, subscriberData.fullName);
-    htmlBody = htmlBody.replace(/{{resubscribe}}/g, resubscribeLink);
+
+    htmlBody = htmlBody
+      .replace(/{{fullName}}/g, subscriberData.fullName)
+      .replace(/{{entity}}/g, entityText)
+      .replace(/{{entityImg}}/g, entityImgFile)
+      .replace(/{{resubscribe}}/g, resubscribeLink);
 
     if (process.env.NODE_ENV === 'development') {
       await resend.emails.send({
@@ -59,7 +84,7 @@ export async function POST(request: Request) {
         html: htmlBody,
       });
     } else {
-      const senderName = subscriberData.entity || 'Spectrum';
+      const senderName = entity || 'Spectrum';
       const fromAddress = `${senderName} <${newsletterEmailAdrs}>`;
       await resend.emails.send({
         from: fromAddress,
