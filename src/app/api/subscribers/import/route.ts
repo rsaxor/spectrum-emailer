@@ -7,8 +7,10 @@ import { z } from 'zod';
 type ExistingSubscriber = { id: string; data: DocumentData };
 
 const subscriberSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters."),
-  email: z.string().email("Invalid email format."),
+  fullName: z.string().min(1, "Name must be at least 1 characters."),
+  email: z.string().refine((val) => val.includes('@') && val.includes('.'), {
+    message: "Email must be a valid format",
+  }),
   status: z.enum(["subscribed", "unsubscribed", "pending"]),
 });
 
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
     const parseResult = Papa.parse(fileText, {
       header: true,
       skipEmptyLines: true,
+      transform: (value) => value.trim(),
     });
 
     const validation = z.array(subscriberSchema).safeParse(parseResult.data);
