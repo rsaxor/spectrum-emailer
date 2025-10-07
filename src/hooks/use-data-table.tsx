@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { getSubscribersPaginated, getSubscribersCount, Subscriber } from '@/lib/subscriber.service';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
 const PAGE_SIZE = 10;
+
+type SubscriberStatus = 'subscribed' | 'unsubscribed' | 'pending';
 
 export function useDataTable() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -13,47 +15,71 @@ export function useDataTable() {
   const [isCountLoading, setIsCountLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
   const [isClient, setIsClient] = useState(false);
-  
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const status = searchParams.get('status') as 'subscribed' | 'unsubscribed' | 'pending' | undefined;
-  const currentPage = Number(searchParams.get('page')) || 1;
+  const status = searchParams.get('status') as SubscriberStatus | undefined;
+  const currentPage = Math.max(Number(searchParams.get('page')) || 1, 1);
   const sortBy = searchParams.get('sortBy') || 'createdAt';
-  const order = searchParams.get('order') || 'desc';
+  const order = searchParams.get('order') === 'asc' ? 'asc' : 'desc';
 
-  const pageCursors = useMemo(() => new Map<number, QueryDocumentSnapshot<DocumentData> | null>([[1, null]]), []);
+  // Use a ref to persist page cursors across renders and avoid re-initialization
+  const pageCursorsRef = useRef(new Map<number, QueryDocumentSnapshot<DocumentData> | null>([[1, null]]));
 
-  const fetchDataForPage = useCallback(async (page: number, currentStatus?: typeof status, currentSortBy?: string, currentOrder?: string) => {
-    setIsLoading(true);
+  const fetchDataForPage = useCallback(
+    async (
+      page: number,
+      currentStatus: SubscriberStatus | undefined,
+      currentSortBy: string,
+      currentOrder: 'asc' | 'desc'
+    ) => {
+      setIsLoading(true);
 
-    if (page > 1 && !pageCursors.has(page)) {
-      for (let i = 2; i <= page; i++) {
-        if (!pageCursors.has(i)) {
-          const prevPageCursor = pageCursors.get(i - 1);
-          const { lastVisible } = await getSubscribersPaginated(
-            currentStatus, prevPageCursor || undefined, PAGE_SIZE, currentSortBy, currentOrder as 'asc' | 'desc'
-          );
-          if (lastVisible) {
-            pageCursors.set(i, lastVisible);
-          } else {
-            break;
+      const pageCursors = pageCursorsRef.current;
+
+      // Build cursors for all intermediate pages if not already present
+      if (page > 1 && !pageCursors.has(page)) {
+        for (let i = 2; i <= page; i++) {
+          if (!pageCursors.has(i)) {
+            const prevCursor = pageCursors.get(i - 1);
+            const { lastVisible } = await getSubscribersPaginated(
+              currentStatus,
+              prevCursor || undefined,
+              PAGE_SIZE,
+              currentSortBy,
+              currentOrder
+            );
+            if (lastVisible) {
+              pageCursors.set(i, lastVisible);
+            } else {
+              break;
+            }
           }
         }
       }
-    }
-    const lastVisible = pageCursors.get(page) || undefined;
-    const { subscribers: newSubscribers, lastVisible: newLastVisible } = await getSubscribersPaginated(
-      currentStatus, lastVisible, PAGE_SIZE, currentSortBy, currentOrder as 'asc' | 'desc'
-    );
-    
-    setSubscribers(newSubscribers);
-    if (newLastVisible) {
-      pageCursors.set(page + 1, newLastVisible);
-    }
-    setIsLoading(false);
-  }, [pageCursors]);
+
+      const lastVisible = pageCursors.get(page) || undefined;
+
+      const { subscribers: newSubscribers, lastVisible: newLastVisible } = await getSubscribersPaginated(
+        currentStatus,
+        lastVisible,
+        PAGE_SIZE,
+        currentSortBy,
+        currentOrder
+      );
+
+      setSubscribers(newSubscribers);
+
+      if (newLastVisible) {
+        pageCursors.set(page + 1, newLastVisible);
+      }
+
+      setIsLoading(false);
+    },
+    []
+  );
 
   useEffect(() => {
     setIsClient(true);
@@ -61,71 +87,97 @@ export function useDataTable() {
 
   useEffect(() => {
     if (!isClient) return;
-    
+
+    let isCancelled = false;
+
     const execute = async () => {
-        setIsCountLoading(true);
-        setIsLoading(true);
+      setIsCountLoading(true);
+      setIsLoading(true);
 
-        await getSubscribersCount(status).then(count => {
-            setPageCount(Math.ceil(count / PAGE_SIZE));
-            setIsCountLoading(false);
-        });
+      try {
+        const totalCount = await getSubscribersCount(status);
+        if (!isCancelled) {
+          const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+          setPageCount(totalPages);
 
-        await fetchDataForPage(currentPage, status, sortBy, order);
+          // Prevent navigating to pages beyond the max
+          if (currentPage > totalPages && totalPages > 0) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('page', String(totalPages));
+            router.replace(`${pathname}?${params.toString()}`);
+            return;
+          }
+
+          await fetchDataForPage(currentPage, status, sortBy, order);
+        }
+      } catch (error) {
+        console.error('Failed to fetch subscribers:', error);
+      } finally {
+        if (!isCancelled) {
+          setIsCountLoading(false);
+          setIsLoading(false);
+        }
+      }
     };
-    
+
     execute();
-    
-  }, [searchParams, isClient, fetchDataForPage]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [searchParams, isClient, fetchDataForPage, currentPage, status, sortBy, order, pathname, router]);
 
   const handlePageChange = (page: number) => {
-    setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', String(page));
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleSortChange = (newSortBy: string) => {
-    setIsLoading(true);
     const params = new URLSearchParams(searchParams.toString());
-    const currentOrder = params.get('order') || 'desc';
+    const currentOrder = params.get('order') === 'asc' ? 'asc' : 'desc';
+
     if (params.get('sortBy') === newSortBy) {
-      params.set('order', currentOrder === 'desc' ? 'asc' : 'desc');
+      // Toggle order
+      params.set('order', currentOrder === 'asc' ? 'desc' : 'asc');
     } else {
+      // New sort field, reset to descending
       params.set('sortBy', newSortBy);
       params.set('order', 'desc');
     }
+
+    // Reset to page 1
     params.set('page', '1');
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleSuccess = (newSubscriber: Subscriber) => {
-    // Instantly update the UI by adding the new item to the list
+    // Optimistically add to UI
     setSubscribers(prev => {
-        const newList = [newSubscriber, ...prev];
-        if (newList.length > PAGE_SIZE) {
-            newList.pop();
-        }
-        return newList;
+      const newList = [newSubscriber, ...prev];
+      if (newList.length > PAGE_SIZE) {
+        newList.pop(); // Keep page size consistent
+      }
+      return newList;
     });
-    // Re-fetch the total count to update pagination if necessary
+
+    // Update total count
     getSubscribersCount(status).then(count => {
-        setPageCount(Math.ceil(count / PAGE_SIZE));
+      setPageCount(Math.ceil(count / PAGE_SIZE));
     });
   };
 
   return {
     subscribers,
     isLoading,
-    setIsLoading,
     isCountLoading,
     pageCount,
-    setPageCount,
     currentPage,
     sortBy,
     order,
     status,
     isClient,
+    setIsLoading,
     handlePageChange,
     handleSortChange,
     handleSuccess,
