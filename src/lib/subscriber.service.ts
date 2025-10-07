@@ -82,16 +82,16 @@ export async function getSubscribersPaginated(
   }
 }
 
-// Function to get dashboard statistics
 export async function getSubscriberStats() {
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
+    
     const activeSubscribersQuery = query(
       subscribersCollectionRef,
       where('status', '==', 'subscribed')
     );
-    const activeSnapshot = await getDocs(activeSubscribersQuery);
-    const totalSubscribers = activeSnapshot.size;
+    const activeSnapshot = await getCountFromServer(activeSubscribersQuery);
+    const totalSubscribers = activeSnapshot.data().count;
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -103,8 +103,8 @@ export async function getSubscriberStats() {
       where('status', '==', 'subscribed'),
       where('createdAt', '>=', thirtyDaysAgoTimestamp)
     );
-    const newSnapshot = await getDocs(newSubscribersQuery);
-    const newSubscribers = newSnapshot.size;
+    const newSnapshot = await getCountFromServer(newSubscribersQuery);
+    const newSubscribers = newSnapshot.data().count;
 
     return { totalSubscribers, newSubscribers };
   } catch (error) {

@@ -1,15 +1,13 @@
 import { Suspense } from 'react';
-import { DashboardDataPage, DashboardSkeleton } from './dashboard-page';
+import { DashboardData, DashboardSkeleton } from './dashboard-page';
 
-export default async function DashboardPage() {
-  // Call the service function to get the data
-
+export default function DashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-        <Suspense fallback={<DashboardSkeleton/>}>
-            <DashboardDataPage/>
-        </Suspense>
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardData />
+      </Suspense>
     </div>
   );
 }
