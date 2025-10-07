@@ -82,26 +82,27 @@ export async function POST(request: Request) {
           const senderName = entity === 'All' ? 'Spectrum' : entity;
           const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
 
-          let count = 0;
-          for (const subscriber of subscribers) {
+          // Create a batch of personalized emails
+          const emailBatch = subscribers.map(subscriber => {
             const unsubscribeLink = `${liveUrl}/unsubscribe?id=${subscriber.id}`;
             let personalizedHtml = htmlBody.replace(/{{fullName}}/g, subscriber.fullName);
             personalizedHtml = personalizedHtml.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
             personalizedHtml = personalizedHtml.replace(/{{resubscribe}}/g, resubscribeLink);
             personalizedHtml = personalizedHtml.replace(/{{host}}/g, liveUrl);
 
-            await resend.emails.send({
+            return {
               from: fromAddress,
               to: subscriber.email,
               subject: subject,
               html: personalizedHtml,
-            });
+            };
+          });
 
-            count++;
-            const progressMessage = `data: {"message": "Sent ${count} of ${totalSubscribers}...", "count": ${count}, "total": ${totalSubscribers}}\n\n`;
+          // Send the entire batch in a single API call
+          await resend.batch.send(emailBatch);
+
+          const progressMessage = `data: {"message": "Sent to ${totalSubscribers} subscribers...", "count": ${totalSubscribers}, "total": ${totalSubscribers}}\n\n`;
             controller.enqueue(encoder.encode(progressMessage));
-            await sleep(300);
-          }
         }
 
         // Signal completion for both modes
