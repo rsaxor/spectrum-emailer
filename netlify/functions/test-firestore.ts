@@ -1,6 +1,7 @@
-import { dbAdmin } from '../../src/lib/firebase-admin';
+import { getDbAdmin } from '../../src/lib/firebase-admin';
 
 export const handler = async () => {
+  const dbAdmin = getDbAdmin();
   try {
     const snapshot = await dbAdmin.collection('subscribers').limit(1).get();
     const data = snapshot.docs.map(d => d.data());

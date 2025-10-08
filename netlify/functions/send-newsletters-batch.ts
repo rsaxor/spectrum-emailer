@@ -1,4 +1,4 @@
-import { dbAdmin } from '../../src/lib/firebase-admin';
+import { getDbAdmin } from '../../src/lib/firebase-admin';
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';
@@ -23,6 +23,8 @@ type NewsletterJob = {
 };
 
 export const handler = async () => {
+  const dbAdmin = getDbAdmin();
+
   console.log('✅ Running newsletter batch sender...');
 
   try {

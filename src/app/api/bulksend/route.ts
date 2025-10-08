@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server';
-import { dbAdmin } from '@/lib/firebase-admin';
-import fs from 'fs/promises';
-import path from 'path';
+import { getDbAdmin } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
+  const dbAdmin = getDbAdmin();
+
   const { templateName, subject, entity, sendStatus } = await request.json();
 
-  // Access env variables here, not at top-level
-  const newsletterEmailAdrs = process.env.NEWSLETTER_EMAIL!;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
   if (!templateName || !subject || !entity || !sendStatus) {
     return NextResponse.json({ message: 'All fields are required.' }, { status: 400 });
   }
