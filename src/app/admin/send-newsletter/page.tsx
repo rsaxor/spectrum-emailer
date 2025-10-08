@@ -141,71 +141,64 @@ export default function SendNewsletterPage() {
     setIsAlertOpen(true);
   };
 
-  const handleProceedSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!subject.trim()) {
-      event.preventDefault();
-      toast.error("Subject is required.");
-      return;
-    }
-    if (!selectedTemplate) return;
+  const handleProceedSend = async () => {
+    if (!subject.trim() || !selectedTemplate) return toast.error("Missing subject/template");
 
     setIsSending(true);
+    setIsAlertOpen(false);
     const toastId = toast.loading("Starting newsletter send...");
 
-    // fetch("/api/send", {
-    fetch("/api/bulksend", {
+    // Start the job
+    const res = await fetch("/api/bulksend", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         templateName: selectedTemplate,
-        subject: subject,
-        entity: entity,
-        sendStatus: sendStatus
+        subject,
+        entity,
+        sendStatus,
       }),
-    }).then(response => {
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      function processStream() {
-        reader?.read().then(({ done, value }) => {
-          if (done) {
-            setIsSending(false);
-            return;
-          }
-          
-          const chunk = decoder.decode(value);
-          // SSE messages are separated by double newlines
-          const lines = chunk.split('\n\n');
-          
-          lines.forEach(line => {
-            if (line.startsWith('data:')) {
-              try {
-                const json = JSON.parse(line.substring(5));
-                if (json.error) {
-                  toast.error(json.message, { id: toastId });
-                } else if (json.done) {
-                  toast.success(json.message, { id: toastId });
-                } else {
-                  toast.loading(json.message, { id: toastId });
-                }
-              } catch (e) {
-                console.error("Failed to parse SSE chunk", e);
-              }
-            }
-          });
-
-          processStream(); // Continue reading the stream
-        });
-      }
-      processStream();
-    }).catch(err => {
-        toast.error("Failed to initiate send.", { id: toastId });
-        setIsSending(false);
     });
+    const data = await res.json();
+    const jobId = data.jobId;
 
-    setIsAlertOpen(false);
-    setSelectedTemplate(null);
-    setSubject("");
+    const pollJobStatus = async (jobId: string) => {
+      let interval = 2000;
+      const maxInterval = 10000;
+      let done = false;
+
+      while (!done) {
+        try {
+          const res = await fetch(`/api/job-status?id=${jobId}`);
+          const statusData = await res.json();
+
+          if (statusData.status === "completed") {
+            toast.success(
+              `Job completed! Sent ${statusData.sentCount}/${statusData.totalSubscribers}`,
+              { id: toastId }
+            );
+            done = true;
+          } else {
+            toast.loading(
+              `Sending... ${statusData.sentCount || 0}/${statusData.totalSubscribers || 0}`,
+              { id: toastId }
+            );
+          }
+
+          interval = Math.min(interval + 1000, maxInterval);
+          await new Promise(r => setTimeout(r, interval));
+        } catch (err) {
+          console.error(err);
+          await new Promise(r => setTimeout(r, interval));
+        }
+      }
+
+      setIsSending(false);
+      setSelectedTemplate(null);
+      setSubject("");
+    };
+
+    pollJobStatus(jobId);
   };
 
   const totalPages = Math.ceil(data.total / limit);
