@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm build"
+  publish = ".next"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Scheduled job every 5 minutes
+[[scheduled]]
+  name = "send-newsletters-batch"
+  cron = "*/5 * * * *"

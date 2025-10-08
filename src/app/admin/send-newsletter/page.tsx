@@ -152,7 +152,8 @@ export default function SendNewsletterPage() {
     setIsSending(true);
     const toastId = toast.loading("Starting newsletter send...");
 
-    fetch("/api/send", {
+    // fetch("/api/send", {
+    fetch("/api/bulksend", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
