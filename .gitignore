@@ -57,3 +57,6 @@ hash-password.js
 
 # firebase admin folder
 /firebase-admin
+
+#tree
+project-structure.txt
