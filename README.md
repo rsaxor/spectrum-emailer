@@ -63,14 +63,28 @@ A comprehensive, in-house newsletter management system built with Next.js and Fi
     ```env
     # Firebase Configuration
     NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+    NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
-    NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
 
-    # Resend API Key
-    RESEND_API_KEY=re_your_api_key
+    # Firebase ADMIN Configuration
+    FIREBASE_CLIENT_EMAIL=your-firebase-admin-client-amail
+    FIREBASE_PRIVATE_KEY=your-firebase-admin-private-key
+
+    # base url working locally=http://localhost:3000
+    # update with live URL in live env config
+    NEXT_PUBLIC_BASE_URL=http://localhost:3000
+    NEWSLETTER_EMAIL=email_sender@yourdomain.com
+
+    # Cloudflare Turnstile
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY=your-cloudflare-turnstile-site-key
+    TURNSTILE_SECRET_KEY=your-cloudflare-turnstile-secret-key
+
+    # Resend
+    RESEND_API_KEY=your-api-key
+    RESEND_EMAIL_ACCT=your-resend-email-account
 
     # Node Environment (for local testing)
     # Use 'development' to send test emails, 'production' to send to the live list
