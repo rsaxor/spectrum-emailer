@@ -5,7 +5,10 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  included_files = ["./emails/**"]
+
+# Specific configuration for send-newsletters-batch function
+[functions."send-newsletters-batch"]
+  included_files = ["emails/**"]
 
 # Scheduled job every 5 minutes
 [[scheduled]]
