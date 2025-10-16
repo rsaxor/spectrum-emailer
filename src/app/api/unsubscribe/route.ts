@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     const resubscribeLink = `${baseUrl}/subscribe?entity=${entity || 'Spectrum'}`;
 
-    const templatePath = path.join(process.cwd(), 'public', 'emails', 'goodbye-unsubscribe.html');
+    const templatePath = path.join(process.cwd(), 'netlify', 'functions', 'emails', 'goodbye-unsubscribe.html');
     let htmlBody = await fs.readFile(templatePath, 'utf8');
 
     htmlBody = htmlBody

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     async start(controller) {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const templatePath = path.join(process.cwd(), 'public', 'emails', templateName);
+        const templatePath = path.join(process.cwd(), 'netlify', 'functions', 'emails', templateName);
         const htmlBody = await fs.readFile(templatePath, 'utf8');
         const liveUrl = baseUrl === 'https://emailer.spectrumdubai.com' ? baseUrl! : process.env.LIVE_URL!;
         const resubscribeLink = `${baseUrl}/subscribe`;

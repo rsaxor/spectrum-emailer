@@ -261,7 +261,7 @@ export default function SendNewsletterPage() {
                             asChild
                           >
                             <a
-                              href={`/emails/${template.name}`}
+                              href={`/api/email-preview?name=${template.name}`}
                               target="_blank"
                               rel="noopener noreferrer"
                             >

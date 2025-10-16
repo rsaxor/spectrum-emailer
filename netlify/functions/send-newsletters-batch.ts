@@ -68,9 +68,16 @@ export const handler = async () => {
     const resubscribeLink = `${baseUrl}/subscribe`;
     const senderName = job.entity === 'All' ? 'Spectrum' : job.entity;
     const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
+    const getTemplatePath = (templateName: string) => {
+      if (process.env.NETLIFY_LOCAL) {
+        return path.join(process.cwd(), 'netlify', 'functions', 'emails', templateName);
+      }
+      // Running on Netlify production (bundled function)
+      return path.join(__dirname, 'emails', templateName);
+    };
 
     // 4️⃣ Load email template
-    const templatePath = path.join(__dirname, 'emails', job.templateName);
+    const templatePath = getTemplatePath(job.templateName);
     const htmlBody = await fs.readFile(templatePath, 'utf8');
 
     // 5️⃣ Start from previous sent count
