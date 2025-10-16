@@ -1,4 +1,4 @@
-import { getDbAdmin } from '../../src/lib/firebase-admin';
+import { getDbAdmin } from '../../../src/lib/firebase-admin';
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';
@@ -74,11 +74,15 @@ export const handler = async () => {
     const templatePath = path.join(emailsDirectory, job.templateName);
     console.log('Resolved template path:', templatePath);
 
+    // Debug: list files inside function and emails folder
     try {
-      const emailFiles = await fs.readdir(path.join(__dirname, 'emails'));
-      console.log('Emails directory contents:', emailFiles);
+      const files = await fs.readdir(__dirname);
+      console.log('Files in function folder:', files);
+      const emailFiles = await fs.readdir(emailsDirectory);
+      console.log('Emails folder contents:', emailFiles);
     } catch (err) {
       console.error('Failed to read emails directory:', err);
+      throw err; // stop if emails folder inaccessible
     }
 
     const htmlBody = await fs.readFile(templatePath, 'utf8');
