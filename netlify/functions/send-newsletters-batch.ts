@@ -71,10 +71,12 @@ export const handler = async () => {
     
     const emailsDirectory = process.env.NETLIFY_LOCAL
         ? path.join(process.cwd(), 'emails') // Path for local development
-        : path.join(__dirname, '..', '..', 'emails'); // Path for Netlify deployment
+        : path.resolve(__dirname, '../../emails');
 
     const templatePath = path.join(emailsDirectory, job.templateName);
     const htmlBody = await fs.readFile(templatePath, 'utf8');
+
+    console.log('Resolved template path:', templatePath);
 
     // 5️⃣ Start from previous sent count
     let sentCount = job.sentCount || 0;
