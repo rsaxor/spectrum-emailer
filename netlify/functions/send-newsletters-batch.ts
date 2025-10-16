@@ -73,13 +73,21 @@ export const handler = async () => {
     const emailsDirectory = path.join(__dirname, 'emails');
     const templatePath = path.join(emailsDirectory, job.templateName);
     console.log('Resolved template path:', templatePath);
+
+    try {
+      const emailFiles = await fs.readdir(path.join(__dirname, 'emails'));
+      console.log('Emails directory contents:', emailFiles);
+    } catch (err) {
+      console.error('Failed to read emails directory:', err);
+    }
+
     const htmlBody = await fs.readFile(templatePath, 'utf8');
 
     const exists = await fs.access(templatePath).then(() => true).catch(() => false);
     console.log('File exists at runtime:', exists);
     
     // const emailsDirectory = process.env.NETLIFY_LOCAL
-    //     ? path.join(process.cwd(), 'netlify', 'functions', 'emails') // Path for local development
+    //     ? path.join(process.cwd(), 'netlify', 'functions', 'send-newsletter-batch', 'emails') // Path for local development
     //     : path.resolve(__dirname, '../../emails');
 
     // const templatePath = path.join(emailsDirectory, job.templateName);
