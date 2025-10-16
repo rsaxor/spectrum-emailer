@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
   if (!templateName) return NextResponse.json({ error: 'Missing template name' }, { status: 400 });
 
-  const filePath = path.join(process.cwd(), 'emails', templateName);
+  const filePath = path.join(process.cwd(), 'netlify', 'functions', 'emails', templateName);
 
   try {
     const html = await fs.readFile(filePath, 'utf-8');

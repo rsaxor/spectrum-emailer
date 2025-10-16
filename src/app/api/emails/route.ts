@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const order = searchParams.get('order') || 'desc';
 
-    const emailsDirectory = path.join(process.cwd(), 'emails');
+    const emailsDirectory = path.join(process.cwd(), 'netlify', 'functions', 'emails');
     const filenames = await fs.readdir(emailsDirectory);
     const htmlFiles = filenames.filter(file => file.endsWith('.html'));
 
