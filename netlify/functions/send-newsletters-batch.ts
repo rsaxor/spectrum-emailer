@@ -70,10 +70,10 @@ export const handler = async () => {
     const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
     const getTemplatePath = (templateName: string) => {
       if (process.env.NETLIFY_LOCAL) {
-        return path.join(process.cwd(), 'netlify', 'functions', 'emails', templateName);
+        return path.join(process.cwd(), 'emails', templateName);
       }
       // Running on Netlify production (bundled function)
-      return path.join(__dirname, 'emails', templateName);
+      return path.join('/var/task/emails', templateName);
     };
 
     // 4️⃣ Load email template
