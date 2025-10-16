@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     const currentEntity: EntityKey = (entity && (entity in entities ? entity : fallbackEntity)) as EntityKey;
     const { text: entityText, img: entityImgFile } = entities[currentEntity];
 
-    const templatePath = path.join(process.cwd(), 'netlify', 'functions', 'emails', 'spec0002.html');
+    const templatePath = path.join(process.cwd(), 'emails', 'spec0002.html');
     let htmlBody = await fs.readFile(templatePath, 'utf8');
 
     htmlBody = htmlBody
