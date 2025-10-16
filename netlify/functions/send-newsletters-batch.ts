@@ -70,7 +70,7 @@ export const handler = async () => {
     const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
 
     // 4️⃣ Load email template
-    const templatePath = path.join(process.cwd(), 'public', 'emails', job.templateName);
+    const templatePath = path.join(__dirname, '../../public/emails', job.templateName);
     const htmlBody = await fs.readFile(templatePath, 'utf8');
 
     // 5️⃣ Start from previous sent count
