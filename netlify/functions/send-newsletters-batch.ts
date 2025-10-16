@@ -70,7 +70,7 @@ export const handler = async () => {
     const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
 
     const root = process.env.LAMBDA_TASK_ROOT || process.cwd();
-    const emailsDirectory = path.join(root, 'emails');
+    const emailsDirectory = path.join(__dirname, 'emails');
     const templatePath = path.join(emailsDirectory, job.templateName);
     console.log('Resolved template path:', templatePath);
     const htmlBody = await fs.readFile(templatePath, 'utf8');
