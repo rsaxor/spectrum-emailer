@@ -79,7 +79,7 @@ export const handler = async () => {
     console.log('File exists at runtime:', exists);
     
     // const emailsDirectory = process.env.NETLIFY_LOCAL
-    //     ? path.join(process.cwd(), 'emails') // Path for local development
+    //     ? path.join(process.cwd(), 'netlify', 'functions', 'emails') // Path for local development
     //     : path.resolve(__dirname, '../../emails');
 
     // const templatePath = path.join(emailsDirectory, job.templateName);
