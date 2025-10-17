@@ -95,3 +95,15 @@ A comprehensive, in-house newsletter management system built with Next.js and Fi
 
 ```bash
 pnpm dev
+```
+
+---
+
+## To do
+
+📝 Robust Error Handling & Logging
+📝 Search feature
+📝 Improve logging of bulk send
+📝 Improve dashboard count
+📝 Add extra field based on resend 'status'
+📝 User tags/category
