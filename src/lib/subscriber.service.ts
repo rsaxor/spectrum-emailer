@@ -25,7 +25,7 @@ export type Subscriber = {
 };
 
 // Function to get only the count
-export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed' | 'pending') {
+export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed' | 'pending' | 'test') {
   const subscribersCollectionRef = collection(db, 'subscribers');
   let q;
   if (status) {
@@ -39,7 +39,7 @@ export async function getSubscribersCount(status?: 'subscribed' | 'unsubscribed'
 
 // Updated function to handle dynamic sorting
 export async function getSubscribersPaginated(
-  status?: 'subscribed' | 'unsubscribed' | 'pending',
+  status?: 'subscribed' | 'unsubscribed' | 'pending' | 'test',
   lastVisible?: QueryDocumentSnapshot<DocumentData>,
   limitSize: number = 10,
   sortBy: string = 'createdAt', // Default sort
@@ -142,7 +142,7 @@ export async function getSubscriberCounts() {
   const docSnap = await getDoc(metadataRef);
   
   if (!docSnap.exists()) {
-    return { subscribedCount: 0, unsubscribedCount: 0, pendingCount: 0 };
+    return { subscribedCount: 0, unsubscribedCount: 0, pendingCount: 0, testCount: 0};
   }
   
   const data = docSnap.data();
@@ -150,5 +150,6 @@ export async function getSubscriberCounts() {
     subscribedCount: data.subscribedCount || 0,
     unsubscribedCount: data.unsubscribedCount || 0,
     pendingCount: data.pendingCount || 0,
+    testCount: data.testCount || 0,
   };
 }
