@@ -343,6 +343,7 @@ export default function SendNewsletterPage() {
                   <SelectItem value="subscribed">Subscribed list</SelectItem>
                   <SelectItem value="unsubscribed">Unsubscribed list</SelectItem>
                   <SelectItem value="pending">Pending list</SelectItem>
+                  <SelectItem value="test">Test list</SelectItem>
                 </SelectContent>
               </Select>
               <Label htmlFor="subject">Subject</Label>

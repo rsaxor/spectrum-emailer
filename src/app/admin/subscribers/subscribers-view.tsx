@@ -25,6 +25,7 @@ export function SubscribersView() {
 		subscribedCount: 0,
 		unsubscribedCount: 0,
 		pendingCount: 0,
+		testCount: 0,
 	});
 	const [isSelectMode, setIsSelectMode] = useState(false);
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);

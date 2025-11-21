@@ -8,6 +8,7 @@ interface FilterTabsProps {
     subscribedCount: number;
     unsubscribedCount: number;
     pendingCount: number;
+    testCount: number;
   };
 }
 
@@ -28,7 +29,7 @@ export function FilterTabs({ counts }: FilterTabsProps) {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const totalCount = counts.subscribedCount + counts.unsubscribedCount + counts.pendingCount;
+  const totalCount = counts.subscribedCount + counts.unsubscribedCount + counts.pendingCount + (counts.testCount || 0);
 
   return (
     <div className="flex gap-2 mb-4">
@@ -43,6 +44,9 @@ export function FilterTabs({ counts }: FilterTabsProps) {
       </Button>
       <Button variant={currentStatus === 'pending' ? 'default' : 'outline'} onClick={() => handleFilterClick('pending')}>
         Pending <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{counts.pendingCount}</span>
+      </Button>
+      <Button variant={currentStatus === 'test' ? 'default' : 'outline'} onClick={() => handleFilterClick('test')}>
+        Test <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">{counts.testCount || 0}</span>
       </Button>
     </div>
   );

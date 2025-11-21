@@ -11,7 +11,7 @@ const subscriberSchema = z.object({
   email: z.string().refine((val) => val.includes('@') && val.includes('.'), {
     message: "Email must be a valid format",
   }),
-  status: z.enum(["subscribed", "unsubscribed", "pending"]),
+  status: z.enum(["subscribed", "unsubscribed", "pending", "test"]),
 });
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
@@ -73,6 +73,7 @@ export async function POST(request: Request) {
           let subscribedDelta = 0;
           let unsubscribedDelta = 0;
           let pendingDelta = 0;
+          let testDelta = 0;
 
           for (let i = 0; i < totalRows; i++) {
             const subscriber = subscribersFromCsv[i];
@@ -96,10 +97,13 @@ export async function POST(request: Request) {
                 if(subscriber.status === 'subscribed') subscribedDelta++;
                 if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
                 if(subscriber.status === 'pending') pendingDelta++;
+                if(subscriber.status === 'test') testDelta++;
                 
                 if(existing.data.status === 'subscribed') subscribedDelta--;
                 if(existing.data.status === 'unsubscribed') unsubscribedDelta--;
                 if(existing.data.status === 'pending') pendingDelta--;
+                if(existing.data.status === 'test') testDelta--;
+
               } else {
                 skippedCount++;
               }
@@ -116,6 +120,8 @@ export async function POST(request: Request) {
               if(subscriber.status === 'subscribed') subscribedDelta++;
               if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
               if(subscriber.status === 'pending') pendingDelta++;
+              if(subscriber.status === 'test') testDelta++;
+              
             }
 
             if (batchCounter >= 499) {
@@ -135,7 +141,8 @@ export async function POST(request: Request) {
             transaction.update(metadataRef, {
                 subscribedCount: increment(subscribedDelta),
                 unsubscribedCount: increment(unsubscribedDelta),
-                pendingCount: increment(pendingDelta)
+                pendingCount: increment(pendingDelta),
+                testCount: increment(testDelta)
             });
           });
 

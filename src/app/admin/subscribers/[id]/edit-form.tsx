@@ -75,6 +75,7 @@ export function EditSubscriberForm({ subscriber }: EditSubscriberFormProps) {
                 <SelectItem value="subscribed">Subscribed</SelectItem>
                 <SelectItem value="unsubscribed">Unsubscribed</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="test">Test</SelectItem>
               </SelectContent>
             </Select>
           </div>
