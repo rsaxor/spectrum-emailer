@@ -1308,7 +1308,9 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                             </tr>
                                             <tr>
                                                 <td align="center">
-                                                    <img src="{{host}}/newsletter/spec0004/0004-01.jpg" width="450" height="301" alt="Printing isn't the problem. Irresponsible printing is.">
+                                                    <a href="https://www.instagram.com/p/DRUDGi2D-mv/?igsh=MW1nMWhnc2ZwbjZ5aA==" target="_blank">
+                                                        <img src="{{host}}/newsletter/spec0004/0004-01.jpg" width="450" height="301" alt="Printing isn't the problem. Irresponsible printing is.">
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -1359,7 +1361,7 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 </tr>
                                 <tr>
                                     <td>
-                                        <img src="{{host}}/newsletter/spec0004/0004-03.jpg" width="400" height="142" alt="Vegan Ink, Acid Free, FSC, Recyclable, Chlorine Free, 100% Recycled Fibers">
+                                        <a href="https://spectrumdubai.com/services/sustainable-printing/" target="_blank"><img src="{{host}}/newsletter/spec0004/0004-03.jpg" width="400" height="142" alt="Vegan Ink, Acid Free, FSC, Recyclable, Chlorine Free, 100% Recycled Fibers"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1384,7 +1386,7 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                                     T: <a href="tel:+97143620566" style="color: #303030; text-decoration: none;">+971 (0) 4 362 0566</a> | E: <a style="color: #303030; text-decoration: none;" href="mailto:info@spectrumdubai.com">info@spectrumdubai.com</a>
                                                 </td>
                                                 <td>
-                                                    <a href="https://spectrumdubai.com/contact"><img src="{{host}}/newsletter/spec0004/0004-04.png" width="120" height="68" alt="Get in Touch"></a>
+                                                    <a href="https://linktr.ee/spectrumuae"><img src="{{host}}/newsletter/spec0004/0004-04.png" width="120" height="68" alt="Get in Touch"></a>
                                                 </td>
                                             </tr>
                                         </table>
