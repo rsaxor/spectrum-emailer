@@ -70,6 +70,7 @@ export function SubscribersView() {
 
 	const handleSuccess = (newSubscriber: Subscriber) => {
         handleSuccessFromHook(newSubscriber);
+		getSubscriberCounts().then(setCounts);
         router.refresh();
     };
 
@@ -87,6 +88,7 @@ export function SubscribersView() {
 			loading: "Deleting...",
 			success: () => {
                 handlePageChange(1); 
+				getSubscriberCounts().then(setCounts);
 				setIsSelectMode(false);
 				setSelectedIds([]);
 				return `${ids.length} subscriber(s) deleted.`;
@@ -112,6 +114,7 @@ export function SubscribersView() {
 			loading: "Deleting all subscribers...",
 			success: () => {
                 handlePageChange(1);
+				getSubscriberCounts().then(setCounts);
 				return "All subscribers have been deleted.";
 			},
 			error: "An error occurred while deleting all subscribers.",

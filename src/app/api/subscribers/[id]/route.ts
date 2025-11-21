@@ -51,16 +51,29 @@ export async function PUT(
         const oldStatus = docSnap.data().status;
         // Only update counters if the status has actually changed
         if (oldStatus !== status) {
-            const metadataRef = doc(db, 'metadata', 'subscribers');
-            const updateData: Record<string, FieldValue> = {};
-            if (status === 'subscribed') {
-                updateData.subscribedCount = increment(1);
-                updateData.unsubscribedCount = increment(-1);
-            } else { // status === 'unsubscribed'
-                updateData.subscribedCount = increment(-1);
-                updateData.unsubscribedCount = increment(1);
-            }
-            transaction.update(metadataRef, updateData);
+          const metadataRef = doc(db, "metadata", "subscribers");
+
+          // Map status to their corresponding counter field
+          const fieldMap: Record<string, string> = {
+            subscribed: "subscribedCount",
+            unsubscribed: "unsubscribedCount",
+            pending: "pendingCount",
+            test: "testCount",
+          };
+
+          const updateData: Record<string, FieldValue> = {};
+
+          // Increment new status
+          if (fieldMap[status]) {
+            updateData[fieldMap[status]] = increment(1);
+          }
+
+          // Decrement old status
+          if (fieldMap[oldStatus]) {
+            updateData[fieldMap[oldStatus]] = increment(-1);
+          }
+
+          transaction.update(metadataRef, updateData);
         }
         
         transaction.update(docRef, { fullName, status, updatedAt: Timestamp.now() });
