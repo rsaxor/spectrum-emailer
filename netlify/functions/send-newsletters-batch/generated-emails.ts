@@ -846,6 +846,599 @@ emailTemplates.set('spec0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
 </body>
 
 </html>`);
+emailTemplates.set('spec0003.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.5, target-densitydpi=device-dpi, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>
+        
+    </title>
+    <style type="text/css">
+        body {
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            border-collapse: collapse;
+        }
+
+        .yshortcuts a {
+            border-bottom: none !important;
+        }
+
+        .hline {
+            width: 100%;
+        }
+
+
+        /* Constrain email width for small screens */
+        @media screen and (max-width: 660px) {
+            table[class="container"] {
+                width: 95% !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Give content more room on mobile */
+        @media screen and (max-width: 480px) {
+            td[class="container-padding"] {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Styles for forcing columns to rows */
+        @media only screen and (max-width : 660px) {
+
+            /* force container columns to (horizontal) blocks */
+            td[class="force-col"] {
+                width: 100% !important;
+                display: block;
+                padding-right: 0 !important;
+            }
+
+            table[class="col-1"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[class="col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 95% !important;
+            }
+
+            /* remove bottom border for last column/row */ 
+            table[class="row2col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[id="last-col-2"] {
+                float: none !important;
+                border-bottom: none !important;
+                margin-bottom: 0;
+            }
+
+            /* align images right and shrink them a bit */
+            img[class="col-2-img"] {
+                float: right;
+                margin-left: 6px;
+                max-width: 130px;
+            }
+
+            img[class="main-img"] {
+                width: 100%;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+
+            img[class="col-main-img"] {
+                width: 100%;
+            }
+        }
+
+        sup {
+            line-height: 1;
+            font-size: 70%;
+            vertical-align: top;
+            mso-text-raise: 60%;
+        }
+
+        u+.body .glist {
+            margin-left: 0 !important;
+        }
+
+        @media only screen and (max-width: 640px) {
+            u+.body .glist {
+                margin-left: 25px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin:0;" topmargin="0" marginwidth="0" marginheight="0" leftmargin="0">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fbfbfb">
+        <tr>
+            <td align="center" valign="top">
+                <table class="container" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
+                    <tr>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr align="left" valign="top">
+                                    <td>
+                                        <a href="https://spectrumdubai.com/pdf/Spectrum-pitching-brochure.pdf" target="_blank">
+                                            <img src="{{host}}/newsletter/spec0003/0003-01.jpg" height="386" alt="Spectrum's The Art of Pitching" width="496">
+                                        </a>
+                                    </td>
+                                    <td style="padding-left: 15px; padding-right: 15px;">
+                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td height="20"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="https://spectrumdubai.com/">
+                                                        <img src="{{host}}/newsletter/spec0003/0003-02.png" alt="Spectrum UAE Ltd. Logo" width="74" height="58">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="30"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 100px; padding-right: 100px;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td  style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1;">
+                                        Hello, {{fullName}}!
+                                        <br>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        <b>Did you know that opportunities are often won or lost in the first few minutes</b>. <br>
+                                        A printed presentation can win commitment.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="10"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        We create materials that decision-makers engage with, keep, and return to. When your strategy is in their hands, it carries more weight and credibility than on any screen.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        <b>Why choose Spectrum Sustainability Printing for your pitch? </b><br>It is the smart choice for smarter business. Spectrum combines quality with responsibility.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        <b>Clients trust us to:</b>
+                                        <ul style="padding-left: 15px; margin-top: 5px;">
+                                            <li>Deliver polished materials that impress stakeholders</li>
+                                            <li>Eliminate the waste of low-quality reprints</li>
+                                            <li>Align with sustainable practices that strengthen brand credibility.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="3"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        <a href="https://spectrumdubai.com/pdf/Spectrum-pitching-brochure.pdf" target="_blank" style="text-decoration: underline; color: #000000;"><b>Read more about the Art of Pitching</b></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr bgcolor="#EFEFEF">
+                        <td style="padding-left: 30px; padding-right: 30px;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="color: #000000; font-family: Times New Roman, Times, serif; font-size: 20px; line-height: 1; text-transform: uppercase; letter-spacing: 1px;">
+                                        WORK WITH US 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        Great ideas deserve more than standard printing. <br>At Spectrum, we help businesses create materials that build trust, <br>strengthen reputation, and support results.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://spectrumdubai.com/contact">
+                                            <img src="{{host}}/newsletter/spec0003/0003-03.jpg" alt="Contact Us" width="110" height="29">
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="18"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="470" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td
+                                        style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
+                                            Copyright (C) 2025 Spectrum Sustainable Print Solution. All rights reserved.
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            You are receiving this message for any of the following reasons: <br>
+                                            we have provided you with our services in the past or you are a valued client, <br>
+                                            you opted in or interacted with us via our website
+                                        </p>
+                                        <p style="margin-bottom: 3px; margin-top: 0; text-align: center;">
+                                            Our mailing address is:
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            Spectrum Sustainable Print Solution, Level B1, Difc Gate District 4, Gate Ave, <br>
+                                            Dubai United Arab Emirates
+                                        </p>
+                                        <p style="margin-bottom: 0; margin-top: 0; text-align: center;">
+                                            Click here <a href="{{unsubscribeLink}}" style="color: #4692db;">unsubscribe</a>.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`);
+emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.5, target-densitydpi=device-dpi, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>
+        
+    </title>
+    <style type="text/css">
+        body {
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            border-collapse: collapse;
+        }
+
+        .yshortcuts a {
+            border-bottom: none !important;
+        }
+
+        .hline {
+            width: 100%;
+        }
+
+
+        /* Constrain email width for small screens */
+        @media screen and (max-width: 660px) {
+            table[class="container"] {
+                width: 95% !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Give content more room on mobile */
+        @media screen and (max-width: 480px) {
+            td[class="container-padding"] {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Styles for forcing columns to rows */
+        @media only screen and (max-width : 660px) {
+
+            /* force container columns to (horizontal) blocks */
+            td[class="force-col"] {
+                width: 100% !important;
+                display: block;
+                padding-right: 0 !important;
+            }
+
+            table[class="col-1"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[class="col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 95% !important;
+            }
+
+            /* remove bottom border for last column/row */ 
+            table[class="row2col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[id="last-col-2"] {
+                float: none !important;
+                border-bottom: none !important;
+                margin-bottom: 0;
+            }
+
+            /* align images right and shrink them a bit */
+            img[class="col-2-img"] {
+                float: right;
+                margin-left: 6px;
+                max-width: 130px;
+            }
+
+            img[class="main-img"] {
+                width: 100%;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+
+            img[class="col-main-img"] {
+                width: 100%;
+            }
+        }
+
+        sup {
+            line-height: 1;
+            font-size: 70%;
+            vertical-align: top;
+            mso-text-raise: 60%;
+        }
+
+        u+.body .glist {
+            margin-left: 0 !important;
+        }
+
+        @media only screen and (max-width: 640px) {
+            u+.body .glist {
+                margin-left: 25px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin:0;" topmargin="0" marginwidth="0" marginheight="0" leftmargin="0">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fbfbfb">
+        <tr>
+            <td align="center" valign="top">
+                <table class="container" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
+                    <tr>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr align="left" valign="top">
+                                    <td style="padding-left: 15px; padding-right: 15px;">
+                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td height="20"></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right">
+                                                    <a href="https://spectrumdubai.com/">
+                                                        <img src="{{host}}/newsletter/spec0004/0004-02.png" alt="Spectrum UAE Ltd. Logo" width="74" height="58">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="30"></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center">
+                                                    <img src="{{host}}/newsletter/spec0004/0004-01.jpg" width="450" height="301" alt="Printing isn't the problem. Irresponsible printing is.">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="30"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 100px; padding-right: 100px;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.25;">
+                                        <b>Every brand wants to look sustainable. <br>But what you print says who you are.</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        A laminated bag, a plastic-coated box, a foil that never decomposes every choice tells a story.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        <b>At Spectrum Sustainable Print Solutions</b>, we make print part of the solution through eco-friendly inks, recycled papers, and <br>
+                                        plastic-free finishes. Sustainability isn't a trend; it's a responsibility. We believe in printing consciously and leaving an impact that <br>
+                                        honors the planet.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
+                                        Join us. Print with purpose. Leave a lasting impression, not a lasting footprint.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="{{host}}/newsletter/spec0004/0004-03.jpg" width="400" height="142" alt="Vegan Ink, Acid Free, FSC, Recyclable, Chlorine Free, 100% Recycled Fibers">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="60"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr bgcolor="#f2f2f4">
+                        <td align="center">
+                            <table width="450" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                            <tr valign="middle">
+                                                <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
+                                                    SPECTRUM SUSTAINABLE PRINTING <br>
+                                                    DIFC, Gate 5 Building, Level B1, Marble Walk, Dubai, UAE <br>
+                                                    T: <a href="tel:+97143620566" style="color: #303030; text-decoration: none;">+971 (0) 4 362 0566</a> | E: <a style="color: #303030; text-decoration: none;" href="mailto:info@spectrumdubai.com">info@spectrumdubai.com</a>
+                                                </td>
+                                                <td>
+                                                    <a href="https://spectrumdubai.com/contact"><img src="{{host}}/newsletter/spec0004/0004-04.png" width="120" height="68" alt="Get in Touch"></a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="18"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="470" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td
+                                        style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
+                                            Copyright (C) 2025 Spectrum Sustainable Print Solution. All rights reserved.
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            You are receiving this message for any of the following reasons: <br>
+                                            we have provided you with our services in the past or you are a valued client, <br>
+                                            you opted in or interacted with us via our website
+                                        </p>
+                                        <p style="margin-bottom: 3px; margin-top: 0; text-align: center;">
+                                            Our mailing address is:
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            Spectrum Sustainable Print Solution, Level B1, Difc Gate District 4, Gate Ave, <br>
+                                            Dubai United Arab Emirates
+                                        </p>
+                                        <p style="margin-bottom: 0; margin-top: 0; text-align: center;">
+                                            Click here <a href="{{unsubscribeLink}}" style="color: #4692db;">unsubscribe</a>.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`);
 emailTemplates.set('test-spectrum-2025-09-16.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
