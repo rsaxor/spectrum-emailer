@@ -1344,8 +1344,7 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr>
                                     <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25;">
                                         <b>At Spectrum Sustainable Print Solutions</b>, we make print part of the solution through eco-friendly inks, recycled papers, and <br>
-                                        plastic-free finishes. Sustainability isn't a trend; it's a responsibility. We believe in printing consciously and leaving an impact that <br>
-                                        honors the planet.
+                                        plastic-free finishes. Sustainability isn't a trend; it's a responsibility. We believe in printing consciously and leaving an impact that honors the planet.
                                     </td>
                                 </tr>
                                 <tr>
@@ -1372,7 +1371,7 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                     </tr>
                     <tr bgcolor="#f2f2f4">
                         <td align="center">
-                            <table width="450" cellspacing="0" cellpadding="0">
+                            <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td height="25"></td>
                                 </tr>
@@ -1380,7 +1379,7 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                     <td>
                                         <table width="100%" cellspacing="0" cellpadding="0">
                                             <tr valign="middle">
-                                                <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
+                                                <td style="color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.25;">
                                                     SPECTRUM SUSTAINABLE PRINTING <br>
                                                     DIFC, Gate 5 Building, Level B1, Marble Walk, Dubai, UAE <br>
                                                     T: <a href="tel:+97143620566" style="color: #303030; text-decoration: none;">+971 (0) 4 362 0566</a> | E: <a style="color: #303030; text-decoration: none;" href="mailto:info@spectrumdubai.com">info@spectrumdubai.com</a>
