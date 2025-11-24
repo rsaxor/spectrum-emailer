@@ -76,7 +76,7 @@ export const handler = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const resubscribeLink = `${baseUrl}/subscribe`;
     const senderName = job.entity === 'All' ? 'Spectrum' : job.entity;
-    const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
+    const fromAddress = `${senderName} Team <${newsletterEmailAdrs}>`;
     
     // 5. Start from previous sent count
     let sentCount = job.sentCount || 0;
