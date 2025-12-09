@@ -4,6 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';
+import { escapeHtml } from '@/lib/sanitize';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,7 +27,6 @@ export async function POST(request: Request) {
   const { templateName, subject, entity, sendStatus } = body;
 
   if (!templateName || !subject || !entity || !sendStatus) {
-    // A non-streaming response for initial validation failure
     return NextResponse.json({ message: 'All fields are required.' }, { status: 400 });
   }
 
@@ -36,10 +36,20 @@ export async function POST(request: Request) {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         const templatePath = path.join(process.cwd(), 'netlify', 'functions', 'send-newsletters-batch', 'emails', templateName);
-        const htmlBody = await fs.readFile(templatePath, 'utf8');
+        
+        // FIX: Validate template exists before reading
+        let htmlBody: string;
+        try {
+          htmlBody = await fs.readFile(templatePath, 'utf8');
+        } catch (fileErr) {
+          console.error(`Template file not found: ${templatePath}`, fileErr);
+          controller.enqueue(encoder.encode(`data: {"message": "Template '${templateName}' not found.", "error": true, "done": true}\n\n`));
+          controller.close();
+          return;
+        }
+
         const liveUrl = baseUrl === 'https://emailer.spectrumdubai.com' ? baseUrl! : process.env.LIVE_URL!;
         const resubscribeLink = `${baseUrl}/subscribe`;
-
 
         if (process.env.NODE_ENV === 'development') {
           // --- DEVELOPMENT MODE (with streaming) ---
@@ -53,7 +63,7 @@ export async function POST(request: Request) {
 
           // Send one final, actual email at the end of the simulation
           const testUnsubscribeLink = `${liveUrl}/unsubscribe?id=test-id`;
-          let personalizedHtml = htmlBody.replace(/{{fullName}}/g, 'Test User');
+          let personalizedHtml = htmlBody.replace(/{{fullName}}/g, escapeHtml('Test User'));
           personalizedHtml = personalizedHtml.replace(/{{unsubscribeLink}}/g, testUnsubscribeLink);
           personalizedHtml = personalizedHtml.replace(/{{resubscribe}}/g, resubscribeLink);
           personalizedHtml = personalizedHtml.replace(/{{host}}/g, liveUrl);
@@ -85,7 +95,8 @@ export async function POST(request: Request) {
           // Create a batch of personalized emails
           const emailBatch = subscribers.map(subscriber => {
             const unsubscribeLink = `${liveUrl}/unsubscribe?id=${subscriber.id}`;
-            let personalizedHtml = htmlBody.replace(/{{fullName}}/g, subscriber.fullName);
+            // FIX: Escape HTML in personalizations
+            let personalizedHtml = htmlBody.replace(/{{fullName}}/g, escapeHtml(subscriber.fullName));
             personalizedHtml = personalizedHtml.replace(/{{unsubscribeLink}}/g, unsubscribeLink);
             personalizedHtml = personalizedHtml.replace(/{{resubscribe}}/g, resubscribeLink);
             personalizedHtml = personalizedHtml.replace(/{{host}}/g, liveUrl);
@@ -102,7 +113,7 @@ export async function POST(request: Request) {
           await resend.batch.send(emailBatch);
 
           const progressMessage = `data: {"message": "Sent to ${totalSubscribers} subscribers...", "count": ${totalSubscribers}, "total": ${totalSubscribers}}\n\n`;
-            controller.enqueue(encoder.encode(progressMessage));
+          controller.enqueue(encoder.encode(progressMessage));
         }
 
         // Signal completion for both modes

@@ -16,9 +16,10 @@ type NewsletterJob = {
   subject: string;
   entity: string;
   sendStatus: string;
-  status: 'pending' | 'completed';
+  status: 'pending' | 'completed' | 'failed';
   sentCount?: number;
   totalSubscribers?: number;
+  lastProcessedIndex?: number; // NEW: Track position safely
 };
 
 // Helper function to split an array into smaller chunks
@@ -34,6 +35,8 @@ export const handler = async () => {
   const dbAdmin = getDbAdmin();
   console.log('✅ Running newsletter batch sender...');
 
+  let jobId: string | null = null;
+
   try {
     // 1. Fetch a pending newsletter job
     const jobsRef = dbAdmin.collection('newsletterJobs');
@@ -45,7 +48,7 @@ export const handler = async () => {
     }
 
     const jobDoc = snapshot.docs[0];
-    const jobId = jobDoc.id;
+    jobId = jobDoc.id;
     const job = jobDoc.data() as NewsletterJob;
 
     // 2. Load subscribers for this job
@@ -60,11 +63,16 @@ export const handler = async () => {
     const total = subscribers.length;
     if (total === 0) {
       console.log('No subscribers for this job, marking as complete.');
-      await jobsRef.doc(jobId).update({ status: 'completed', sentCount: 0, totalSubscribers: 0 });
+      await jobsRef.doc(jobId).update({ 
+        status: 'completed', 
+        sentCount: 0, 
+        totalSubscribers: 0,
+        lastProcessedIndex: 0 
+      });
       return { statusCode: 200, body: 'No subscribers to send.' };
     }
 
-    // 3. Load email template from the bundled code (no more filesystem access)
+    // 3. Load email template from the bundled code
     const htmlBody = emailTemplates.get(job.templateName);
 
     if (!htmlBody) {
@@ -72,17 +80,20 @@ export const handler = async () => {
     }
 
     // 4. Prepare batch sending details
-    const batchSize = 100; // Resend's max batch size
+    const batchSize = 100;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const resubscribeLink = `${baseUrl}/subscribe`;
     const senderName = job.entity === 'All' ? 'Spectrum' : job.entity;
     const fromAddress = `${senderName} Team <${newsletterEmailAdrs}>`;
     
-    // 5. Start from previous sent count
+    // 5. Start from safe checkpoint
+    const startIndex = job.lastProcessedIndex || 0;
     let sentCount = job.sentCount || 0;
-    const subscriberChunks = chunkArray(subscribers.slice(sentCount), batchSize);
+    const subscriberChunks = chunkArray(subscribers.slice(startIndex), batchSize);
 
-    for (const chunk of subscriberChunks) {
+    for (let chunkIdx = 0; chunkIdx < subscriberChunks.length; chunkIdx++) {
+      const chunk = subscriberChunks[chunkIdx];
+      
       const emailBatch = chunk.map(sub => {
         const unsubscribeLink = `${baseUrl}/unsubscribe?id=${sub.id}`;
         const personalizedHtml = htmlBody
@@ -97,23 +108,36 @@ export const handler = async () => {
       try {
         await resend.batch.send(emailBatch);
         sentCount += chunk.length;
+        const newLastProcessedIndex = startIndex + sentCount;
 
         console.log(`Sent ${sentCount}/${total} emails for job ${jobId}`);
 
-        // 6. Update progress in Firestore
-        await jobsRef.doc(jobId).update({ sentCount });
+        // FIX: Update progress atomically with index checkpoint
+        await jobsRef.doc(jobId).update({ 
+          sentCount,
+          lastProcessedIndex: newLastProcessedIndex
+        });
 
-        // Pause to avoid API rate limits
         await new Promise(res => setTimeout(res, 1000));
       } catch (err) {
         console.error('Error sending batch:', err);
-        throw err; // Stop the function if a batch fails
+        // Update job with failed status but keep progress
+        await jobsRef.doc(jobId).update({ 
+          status: 'failed',
+          sentCount,
+          lastProcessedIndex: startIndex + sentCount
+        });
+        throw err;
       }
     }
 
     // 7. Mark job as completed
     if (sentCount >= total) {
-      await jobsRef.doc(jobId).update({ status: 'completed', totalSubscribers: total });
+      await jobsRef.doc(jobId).update({ 
+        status: 'completed', 
+        totalSubscribers: total,
+        lastProcessedIndex: total 
+      });
       console.log(`✅ Job ${jobId} completed!`);
     }
 
@@ -121,7 +145,11 @@ export const handler = async () => {
 
   } catch (error) {
     console.error('Newsletter batch sender error:', error);
-    // You can also update the job in Firestore to 'failed' here if you get the jobId
+    if (jobId) {
+      await dbAdmin.collection('newsletterJobs').doc(jobId).update({ 
+        status: 'failed' 
+      }).catch(err => console.error('Failed to mark job as failed:', err));
+    }
     return { statusCode: 500, body: 'Internal Server Error' };
   }
 };

@@ -3,6 +3,8 @@ import { db } from '@/lib/firebase';
 import { collection, writeBatch, Timestamp, query, where, getDocs, doc, runTransaction, increment, DocumentData } from 'firebase/firestore';
 import Papa from 'papaparse';
 import { z } from 'zod';
+import { sanitizeInput, sanitizeEmail } from '@/lib/sanitize';
+import { BATCH_OPERATIONS } from '@/lib/constants';
 
 type ExistingSubscriber = { id: string; data: DocumentData };
 
@@ -31,6 +33,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'No file uploaded.' }, { status: 400 });
     }
 
+    // FIX: Check file size before processing
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { message: 'File size exceeds 5MB limit. Please upload a smaller file.' },
+        { status: 413 }
+      );
+    }
+
     const fileText = await file.text();
 
     const parseResult = Papa.parse(fileText, {
@@ -38,6 +49,15 @@ export async function POST(request: Request) {
       skipEmptyLines: true,
       transform: (value) => value.trim(),
     });
+
+    // FIX: Limit number of rows
+    const MAX_ROWS = 10000;
+    if (parseResult.data.length > MAX_ROWS) {
+      return NextResponse.json(
+        { message: `CSV exceeds maximum of ${MAX_ROWS} rows. Please split your file.` },
+        { status: 400 }
+      );
+    }
 
     const validation = z.array(subscriberSchema).safeParse(parseResult.data);
     if (!validation.success) {
@@ -63,17 +83,16 @@ export async function POST(request: Request) {
               snapshot.docs.forEach(doc => existingSubscribers.set(doc.data().email, { id: doc.id, data: doc.data() }));
           }
 
-          let batch = writeBatch(db);
           let successCount = 0;
           let updatedCount = 0;
           let skippedCount = 0;
-          let batchCounter = 0;
 
-          // Track counter changes
+          // Track counter changes BEFORE any writes
           let subscribedDelta = 0;
           let unsubscribedDelta = 0;
           let pendingDelta = 0;
           let testDelta = 0;
+          const opsToPerform: Array<{ type: 'set' | 'update'; ref: string; data: any }> = [];
 
           for (let i = 0; i < totalRows; i++) {
             const subscriber = subscribersFromCsv[i];
@@ -81,19 +100,31 @@ export async function POST(request: Request) {
             const progressMessage = `data: {"message": "Processing ${i + 1} of ${totalRows}..."}\n\n`;
             controller.enqueue(encoder.encode(progressMessage));
 
-            const existing = existingSubscribers.get(subscriber.email);
+            // FIX: Sanitize input before processing
+            const sanitizedEmail = sanitizeEmail(subscriber.email);
+            const sanitizedName = sanitizeInput(subscriber.fullName);
+
+            if (!sanitizedEmail) {
+              skippedCount++;
+              continue;
+            }
+
+            const existing = existingSubscribers.get(sanitizedEmail);
 
             if (existing) {
               if (existing.data.status !== subscriber.status) {
-                const docRef = doc(db, 'subscribers', existing.id);
-                batch.update(docRef, { 
-                    fullName: subscriber.fullName, 
+                opsToPerform.push({
+                  type: 'update',
+                  ref: existing.id,
+                  data: { 
+                    fullName: sanitizedName, 
                     status: subscriber.status,
                     updatedAt: Timestamp.now()
+                  }
                 });
                 updatedCount++;
-                batchCounter++;
-                // Update deltas based on status change
+                
+                // Update deltas
                 if(subscriber.status === 'subscribed') subscribedDelta++;
                 if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
                 if(subscriber.status === 'pending') pendingDelta++;
@@ -103,40 +134,43 @@ export async function POST(request: Request) {
                 if(existing.data.status === 'unsubscribed') unsubscribedDelta--;
                 if(existing.data.status === 'pending') pendingDelta--;
                 if(existing.data.status === 'test') testDelta--;
-
               } else {
                 skippedCount++;
               }
             } else {
-              const docRef = doc(subscribersRef);
-              batch.set(docRef, {
-                ...subscriber,
-                createdAt: Timestamp.now(),
-                updatedAt: Timestamp.now()
+              opsToPerform.push({
+                type: 'set',
+                ref: doc(subscribersRef).id, // Get ref before batch
+                data: {
+                  email: sanitizedEmail,
+                  fullName: sanitizedName,
+                  status: subscriber.status,
+                  createdAt: Timestamp.now(),
+                  updatedAt: Timestamp.now()
+                }
               });
               successCount++;
-              batchCounter++;
-              // Update deltas for new subscriber
+
               if(subscriber.status === 'subscribed') subscribedDelta++;
               if(subscriber.status === 'unsubscribed') unsubscribedDelta++;
               if(subscriber.status === 'pending') pendingDelta++;
               if(subscriber.status === 'test') testDelta++;
-              
-            }
-
-            if (batchCounter >= 499) {
-              await batch.commit();
-              batch = writeBatch(db);
-              batchCounter = 0;
             }
           }
-          
-          if (batchCounter > 0) {
-            await batch.commit();
-          }
 
-          // --- RUN TRANSACTION TO UPDATE METADATA ---
+          // FIX: Use transaction to atomically write all changes + update metadata
           await runTransaction(db, async (transaction) => {
+            // Execute all pending operations
+            for (const op of opsToPerform) {
+              const docRef = doc(subscribersRef, op.ref);
+              if (op.type === 'set') {
+                transaction.set(docRef, op.data);
+              } else {
+                transaction.update(docRef, op.data);
+              }
+            }
+
+            // Update metadata in same transaction
             const metadataRef = doc(db, 'metadata', 'subscribers');
             transaction.update(metadataRef, {
                 subscribedCount: increment(subscribedDelta),

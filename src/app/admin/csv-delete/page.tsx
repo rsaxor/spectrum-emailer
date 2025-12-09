@@ -103,13 +103,13 @@ export default function CsvDeletePage() {
         <CardHeader>
           <CardTitle className="text-red-600">Danger Zone: Bulk Delete</CardTitle>
           <CardDescription>
-            {/* FIX 4: Escaped single quotes with &apos; */}
+            {/* FIX: Escaped single quotes */}
             Upload a CSV file containing an <strong>email</strong> column. Any email in the file that matches a subscriber in the database will be <strong>permanently deleted</strong>.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            {/* FIX 4: Escaped single quotes with &apos; */}
+            {/* FIX: Escaped single quotes in JSX attribute */}
             <Label htmlFor="csv-file">CSV File (must have &apos;email&apos; header)</Label>
             <Input id="csv-file" type="file" accept=".csv" onChange={handleFileChange} />
           </div>

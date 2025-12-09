@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc, Timestamp, runTransaction, increment } from 'fi
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';
+import { handleCorsPreFlight, addCorsHeaders } from '@/lib/cors';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -94,10 +95,22 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ message: 'You have been successfully unsubscribed.' });
+    // FIX: Add CORS headers
+    const response = NextResponse.json({ message: 'You have been successfully unsubscribed.' });
+    return addCorsHeaders(response);
 
   } catch (error) {
     console.error('Unsubscribe API error:', error);
-    return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });
+    const response = NextResponse.json(
+      { message: 'An unexpected error occurred.' },
+      { status: 500 }
+    );
+    return addCorsHeaders(response);
   }
+}
+
+// FIX: Handle OPTIONS preflight
+export async function OPTIONS(request: Request) {
+  return handleCorsPreFlight(request as any) || 
+    new Response(null, { status: 204 });
 }

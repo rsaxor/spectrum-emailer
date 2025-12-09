@@ -1,12 +1,11 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Subscriber } from '@/lib/subscriber.service';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -72,24 +71,13 @@ function TableSkeleton() {
   );
 }
 
-function PaginationSkeleton() {
-    return (
-        <div className="mt-4 flex justify-center">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
-              <Skeleton className="h-9 w-9 rounded-md bg-gray-500" />
-              <Skeleton className="h-9 w-20 rounded-md bg-gray-500" />
-            </div>
-        </div>
-    );
-}
-
 interface SubscribersTableProps {
   subscribers: Subscriber[];
   isLoading: boolean;
-  isCountLoading: boolean; // Add the missing prop here
-  pageCount: number;
+  isCountLoading: boolean;
   currentPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
   handlePageChange: (page: number) => void;
   isSelectMode: boolean;
   selectedIds: string[];
@@ -106,8 +94,9 @@ export function SubscribersTable({
   subscribers,
   isLoading,
   isCountLoading,
-  pageCount,
   currentPage,
+  hasNextPage,
+  hasPrevPage,
   handlePageChange,
   isSelectMode,
   selectedIds,
@@ -120,26 +109,6 @@ export function SubscribersTable({
   onSelectAll,
 }: SubscribersTableProps) {
   
-  const renderPaginationItems = () => {
-    if (pageCount <= 1) return null;
-    if (pageCount <= 7) {
-      return [...Array(pageCount)].map((_, i) => (
-        <PaginationItem key={i}><PaginationLink href="#" onClick={(e) => { e.preventDefault(); handlePageChange(i + 1); }} isActive={currentPage === i + 1}>{i + 1}</PaginationLink></PaginationItem>
-      ));
-    }
-    const pages = [];
-    pages.push(<PaginationItem key={1}><PaginationLink href="#" onClick={(e) => { e.preventDefault(); handlePageChange(1); }} isActive={currentPage === 1}>1</PaginationLink></PaginationItem>);
-    if (currentPage > 3) pages.push(<PaginationEllipsis key="start-ellipsis" />);
-    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-      if (i > 1 && i < pageCount) {
-        pages.push(<PaginationItem key={i}><PaginationLink href="#" onClick={(e) => { e.preventDefault(); handlePageChange(i); }} isActive={currentPage === i}>{i}</PaginationLink></PaginationItem>);
-      }
-    }
-    if (currentPage < pageCount - 2) pages.push(<PaginationEllipsis key="end-ellipsis" />);
-    pages.push(<PaginationItem key={pageCount}><PaginationLink href="#" onClick={(e) => { e.preventDefault(); handlePageChange(pageCount); }} isActive={currentPage === pageCount}>{pageCount}</PaginationLink></PaginationItem>);
-    return pages;
-  };
-
   return (
     <div>
       {isLoading ? <TableSkeleton /> : (
@@ -187,14 +156,34 @@ export function SubscribersTable({
           </Table>
         </div>
       )}
-      {isCountLoading ? <PaginationSkeleton /> : (
-        <Pagination className="mt-4">
-          <PaginationContent>
-            <PaginationItem><PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); if (currentPage > 1) handlePageChange(currentPage - 1); }} className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''} /></PaginationItem>
-            {renderPaginationItems()}
-            <PaginationItem><PaginationNext href="#" onClick={(e) => { e.preventDefault(); if (currentPage < pageCount) handlePageChange(currentPage + 1); }} className={currentPage === pageCount ? 'pointer-events-none opacity-50' : ''} /></PaginationItem>
-          </PaginationContent>
-        </Pagination>
+
+      {/* FIX: Simple Next/Previous Pagination */}
+      {!isCountLoading && (
+        <div className="flex items-center justify-between mt-4">
+          <div className="text-sm text-muted-foreground">
+            Page <span className="font-semibold">{currentPage}</span>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={!hasPrevPage || isLoading}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={!hasNextPage || isLoading}
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

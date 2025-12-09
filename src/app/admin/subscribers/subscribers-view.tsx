@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDataTable } from "@/hooks/use-data-table";
+import { SearchBar } from "@/components/search-bar";
 import { toast } from "sonner";
 import { PageHeader } from "./page-header";
 import { FilterTabs } from "../filter-tabs";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
 import { getSubscriberCounts, Subscriber } from "@/lib/subscriber.service";
+import { isValidPageNumber } from '@/lib/validators';
 
 export function SubscribersView() {
 	const [counts, setCounts] = useState({
@@ -32,20 +34,26 @@ export function SubscribersView() {
 	const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
 
 	const {
 		subscribers,
 		isLoading,
+		isSearching,
 		setIsLoading,
 		isCountLoading,
-		pageCount,
 		currentPage,
+		hasNextPage,
+		hasPrevPage,
 		sortBy,
 		order,
 		isClient,
-		handlePageChange,
+		searchQuery,
+		handlePageChange: handlePageChangeFromHook,
 		handleSortChange,
-        handleSuccess: handleSuccessFromHook,
+		handleSearchChange,
+		handleSuccess: handleSuccessFromHook,
 	} = useDataTable();
 
 	const handleSelect = (id: string) => {
@@ -128,6 +136,18 @@ export function SubscribersView() {
 		setSelectedIds([id]);
 	};
 
+	const handlePageChange = (page: number) => {
+		// FIX: Validate page number before navigation
+		if (!isValidPageNumber(page)) {
+			console.warn(`Invalid page number: ${page}`);
+			return;
+		}
+		
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('page', String(page));
+		router.push(`${pathname}?${params.toString()}`);
+	};
+
 	useEffect(() => {
 		if (!isClient) return;
 		// Fetch the counts when the component mounts or filters change
@@ -152,13 +172,24 @@ export function SubscribersView() {
 				onProceedDelete={handleProceedDelete}
 				isDeleting={isLoading}
 			/>
+			
+			<div className="mb-7">
+				<SearchBar 
+					onSearchChange={handleSearchChange}
+					isLoading={isLoading}
+					placeholder="Search by name or email..."
+					debounceMs={300}
+				/>
+			</div>
+
 			<FilterTabs counts={counts} />
 			<SubscribersTable
 				subscribers={subscribers}
 				isLoading={isLoading}
 				isCountLoading={isCountLoading}
-				pageCount={pageCount}
 				currentPage={currentPage}
+				hasNextPage={hasNextPage}
+				hasPrevPage={hasPrevPage}
 				handlePageChange={handlePageChange}
 				isSelectMode={isSelectMode}
 				selectedIds={selectedIds}

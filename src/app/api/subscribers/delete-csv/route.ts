@@ -9,7 +9,7 @@ import {
   runTransaction, 
   increment, 
   doc, 
-  DocumentReference, // Import this type
+  DocumentReference, 
   DocumentData 
 } from 'firebase/firestore';
 import Papa from 'papaparse';
@@ -68,8 +68,7 @@ export async function POST(request: Request) {
 
           const emailChunks = chunkArray(rows.map(r => r.email), 30);
           
-          // FIX 1 & 2: Use 'const' and explicit types instead of 'any'
-          const docsToDelete: { ref: DocumentReference<DocumentData>; status: string }[] = [];
+          const docsToDelete: Array<{ ref: DocumentReference<DocumentData>; status: string }> = [];
           let processedCount = 0;
 
           for (const chunk of emailChunks) {

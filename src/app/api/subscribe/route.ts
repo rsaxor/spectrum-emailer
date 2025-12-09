@@ -4,6 +4,7 @@ import { collection, addDoc, updateDoc, query, where, getDocs, Timestamp, doc, i
 import { Resend } from 'resend';
 import fs from 'fs/promises';
 import path from 'path';  
+import { handleCorsPreFlight, addCorsHeaders } from '@/lib/cors';
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -142,10 +143,22 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ message, newSubscriber }, { status });
+    // FIX: Add CORS headers to response
+    const response = NextResponse.json({ message, newSubscriber }, { status });
+    return addCorsHeaders(response);
 
   } catch (error) {
     console.error('Subscription API error:', error);
-    return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });
+    const response = NextResponse.json(
+      { message: 'An unexpected error occurred.' },
+      { status: 500 }
+    );
+    return addCorsHeaders(response);
   }
+}
+
+// FIX: Handle OPTIONS preflight requests
+export async function OPTIONS(request: Request) {
+  return handleCorsPreFlight(request as any) || 
+    new Response(null, { status: 204 });
 }

@@ -14,16 +14,14 @@ export async function GET(request: Request) {
     const filenames = await fs.readdir(emailsDirectory);
     const htmlFiles = filenames.filter(file => file.endsWith('.html'));
 
-    const templatesWithDetails = await Promise.all(
-      htmlFiles.map(async (file) => {
-        const filePath = path.join(emailsDirectory, file);
-        const stats = await fs.stat(filePath);
-        return {
-          name: file,
-          createdAt: stats.mtime, // Use mtime for modification date
-        };
-      })
-    );
+    // FIX: Use consistent build timestamp instead of mtime
+    // All templates use the same "created" date when bundled
+    const buildTime = new Date(2025, 0, 1); // Jan 1, 2025
+
+    const templatesWithDetails = htmlFiles.map((file) => ({
+      name: file,
+      createdAt: buildTime, // Use consistent timestamp
+    }));
 
     // Sort the templates
     templatesWithDetails.sort((a, b) => {

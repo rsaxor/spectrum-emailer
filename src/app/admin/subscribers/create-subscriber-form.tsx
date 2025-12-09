@@ -7,13 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Subscriber } from "@/lib/subscriber.service";
-import Turnstile from "react-turnstile";
 import { useEntity } from "@/context/EntityContext";
 
-// Correct the type definition for the props here
 interface CreateSubscriberFormProps {
 	setOpen: (open: boolean) => void;
-	onSuccess: (newSubscriber: Subscriber) => void; // Expects a Subscriber object
+	onSuccess: (newSubscriber: Subscriber) => void;
 }
 
 export function CreateSubscriberForm({
@@ -23,22 +21,17 @@ export function CreateSubscriberForm({
 	const [fullName, setFullName] = useState("");
 	const [email, setEmail] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [token, setToken] = useState<string | null>(null);
-	const { entity } = useEntity(); // Get the current entity
+	const { entity } = useEntity();
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (!token) {
-			toast.error("Please complete the CAPTCHA verification.");
-			return;
-		}
 		setIsLoading(true);
 
 		try {
 			const response = await fetch("/api/subscribe", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ fullName, email, token, entity }),
+				body: JSON.stringify({ fullName, email, entity }),
 			});
 
 			const data = await response.json();
@@ -47,7 +40,7 @@ export function CreateSubscriberForm({
 			}
 
 			setOpen(false);
-			onSuccess(data.newSubscriber); // Pass the data to the callback
+			onSuccess(data.newSubscriber);
 			toast.success("Subscriber added successfully!");
 		} catch (err) {
 			if (err instanceof Error) {
@@ -91,13 +84,6 @@ export function CreateSubscriberForm({
 				{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 				Create Subscriber
 			</Button>
-			<div className="flex justify-center w-full">
-				<Turnstile
-					sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-					onVerify={(token) => setToken(token)}
-					size="normal"
-				/>
-			</div>
 		</form>
 	);
 }

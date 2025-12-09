@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Turnstile from "react-turnstile";
+import { getEntityImage } from "@/lib/entity-map";
 
 function SubscribeForm() {
   const [fullName, setFullName] = useState("");
@@ -27,14 +28,7 @@ function SubscribeForm() {
   const searchParams = useSearchParams();
   const entity = searchParams.get('entity') || 'Spectrum';
 
-  const entityMap = {
-    TCC: { alt: "The Card Co.", img: "/tcc.png", width: 80, height:32 },
-    Spectrum: { alt: "Spectrum Sustainable Print", img: "/spectrum.png", width: 80, height:32 },
-    HOS: { alt: "House of Spectrum", img: "/hos.png", width: 80, height:32 },
-    All: { alt: "Spectrum Sustainable Print", img: "/all.png", width: 250, height:150 },
-  } as const;
-
-  const { alt, img, width, height } = entityMap[entity as keyof typeof entityMap] ?? entityMap.Spectrum;
+  const { alt, img, width, height } = getEntityImage(entity as any);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,7 +70,7 @@ function SubscribeForm() {
         <div className="flex items-center justify-center gap-6">
           <Image
             src={img}
-            alt={`${alt} Logo`}
+            alt={alt}
             width={width}
             height={height}
             className="object-contain"
