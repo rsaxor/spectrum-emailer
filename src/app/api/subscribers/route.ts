@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { getSubscribersPaginated } from '@/lib/subscriber.service';
-import { doc, runTransaction, getDoc, increment } from 'firebase/firestore';
+import { doc, runTransaction, FieldValue, increment } from 'firebase/firestore';
 
 export async function GET(request: Request) {
   try {
@@ -26,36 +26,56 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ message: 'Subscriber IDs are required.' }, { status: 400 });
     }
 
+    // FIX: Use transaction to atomically delete AND update metadata
     await runTransaction(db, async (transaction) => {
-      let subscribedToDelete = 0;
-      let unsubscribedToDelete = 0;
-      let pendingToDelete = 0;
+      // Step 1: Get all documents first to check their statuses
+      const statusCounts: Record<string, number> = {
+        subscribed: 0,
+        unsubscribed: 0,
+        pending: 0,
+        test: 0,
+      };
 
-      // First, get all the documents to check their status before deleting
-      for (const id of ids) {
-        const docRef = doc(db, 'subscribers', id);
+      const docRefs = ids.map(id => doc(db, 'subscribers', id));
+      
+      // Fetch all docs within transaction
+      for (const docRef of docRefs) {
         const docSnap = await transaction.get(docRef);
         if (docSnap.exists()) {
           const status = docSnap.data().status;
-          if (status === 'subscribed') subscribedToDelete++;
-          else if (status === 'unsubscribed') unsubscribedToDelete++;
-          else if (status === 'pending') pendingToDelete++;
+          // FIX: Only count if status exists in our map
+          if (status in statusCounts) {
+            statusCounts[status]++;
+          }
         }
       }
 
-      // Now, perform all the deletes
-      ids.forEach((id: string) => {
-        const docRef = doc(db, 'subscribers', id);
+      // Step 2: Delete all documents
+      for (const docRef of docRefs) {
         transaction.delete(docRef);
-      });
+      }
 
-      // Finally, update the metadata counters
+      // Step 3: Update metadata with correct decrements
       const metadataRef = doc(db, 'metadata', 'subscribers');
-      transaction.update(metadataRef, {
-        subscribedCount: increment(-subscribedToDelete),
-        unsubscribedCount: increment(-unsubscribedToDelete),
-        pendingCount: increment(-pendingToDelete),
-      });
+      const updateData: Record<string, FieldValue> = {};
+
+      if (statusCounts.subscribed > 0) {
+        updateData.subscribedCount = increment(-statusCounts.subscribed);
+      }
+      if (statusCounts.unsubscribed > 0) {
+        updateData.unsubscribedCount = increment(-statusCounts.unsubscribed);
+      }
+      if (statusCounts.pending > 0) {
+        updateData.pendingCount = increment(-statusCounts.pending);
+      }
+      if (statusCounts.test > 0) {
+        updateData.testCount = increment(-statusCounts.test);
+      }
+
+      // Only update if there are changes
+      if (Object.keys(updateData).length > 0) {
+        transaction.update(metadataRef, updateData);
+      }
     });
 
     return NextResponse.json({ message: 'Subscribers deleted successfully.' });

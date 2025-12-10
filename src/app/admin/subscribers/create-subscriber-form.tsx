@@ -28,7 +28,8 @@ export function CreateSubscriberForm({
 		setIsLoading(true);
 
 		try {
-			const response = await fetch("/api/subscribe", {
+			// FIX: Use admin endpoint instead of public subscribe endpoint
+			const response = await fetch("/api/admin/subscribe", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ fullName, email, entity }),
@@ -40,8 +41,10 @@ export function CreateSubscriberForm({
 			}
 
 			setOpen(false);
+			setFullName("");
+			setEmail("");
 			onSuccess(data.newSubscriber);
-			toast.success("Subscriber added successfully!");
+			toast.success(data.message);
 		} catch (err) {
 			if (err instanceof Error) {
 				toast.error(err.message);

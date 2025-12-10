@@ -141,7 +141,7 @@ emailTemplates.set('goodbye-unsubscribe.html', `<!DOCTYPE html PUBLIC "-//W3C//D
                         <td align="center">
                             <table width="450" cellspacing="0" cellpadding="0">
                                 <tr align="center">
-                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="https://emailer.spectrumdubai.com/{{entityImg}}" alt="{{entity}}" width="100"></td>
+                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="https://emailer.spectrumdubai.com/{{entityImg}}" alt="{{entity}}" width="220"></td>
                                 </tr>
                             </table>
                         </td>
@@ -1581,9 +1581,9 @@ emailTemplates.set('test-spectrum-2025-09-16.html', `<!DOCTYPE html PUBLIC "-//W
                         <td align="center">
                             <table width="450" cellspacing="0" cellpadding="0">
                                 <tr align="center">
-                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="https://emailer.spectrumdubai.com/tcc.png" alt="The card co." width="100"></td>
-                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="https://emailer.spectrumdubai.com/spectrum.png" alt="Spectrum Sustainable Print" width="100"></td>
-                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="https://emailer.spectrumdubai.com/hos.png" alt="House of Spectrum" width="100"></td>
+                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="{{host}}/test-tcc.jpg" alt="The card co." width="100"></td>
+                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="{{host}}/test-spec.jpg" alt="Spectrum Sustainable Print" width="100"></td>
+                                    <td style="padding-left: 7px; padding-right: 7px;"><img src="{{host}}/test-hos.jpg" alt="House of Spectrum" width="100"></td>
                                 </tr>
                             </table>
                         </td>

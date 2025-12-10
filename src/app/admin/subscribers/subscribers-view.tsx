@@ -78,6 +78,7 @@ export function SubscribersView() {
 
 	const handleSuccess = (newSubscriber: Subscriber) => {
         handleSuccessFromHook(newSubscriber);
+		// FIX: Refresh counts immediately after any change
 		getSubscriberCounts().then(setCounts);
         router.refresh();
     };
@@ -96,6 +97,7 @@ export function SubscribersView() {
 			loading: "Deleting...",
 			success: () => {
                 handlePageChange(1); 
+				// FIX: Refresh counts after deletion
 				getSubscriberCounts().then(setCounts);
 				setIsSelectMode(false);
 				setSelectedIds([]);
@@ -122,6 +124,7 @@ export function SubscribersView() {
 			loading: "Deleting all subscribers...",
 			success: () => {
                 handlePageChange(1);
+				// FIX: Refresh counts after bulk deletion
 				getSubscriberCounts().then(setCounts);
 				return "All subscribers have been deleted.";
 			},
@@ -137,7 +140,6 @@ export function SubscribersView() {
 	};
 
 	const handlePageChange = (page: number) => {
-		// FIX: Validate page number before navigation
 		if (!isValidPageNumber(page)) {
 			console.warn(`Invalid page number: ${page}`);
 			return;
@@ -148,11 +150,11 @@ export function SubscribersView() {
 		router.push(`${pathname}?${params.toString()}`);
 	};
 
+	// FIX: Update counts when filter status changes
 	useEffect(() => {
 		if (!isClient) return;
-		// Fetch the counts when the component mounts or filters change
 		getSubscriberCounts().then(setCounts);
-	}, [isClient, subscribers]); // Re-fetch counts if the filter status / subscribers changes
+	}, [isClient, searchParams.get('status')]);
 
 	if (!isClient) {
 		return <div>Loading...</div>;

@@ -1,10 +1,53 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, MailPlus, MailX, Clock, TrendingUp } from 'lucide-react';
+import { Users, MailPlus, MailX, Clock, TrendingUp, RotateCw } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { getComprehensiveStats } from '@/lib/subscriber.service';
 
-export async function DashboardData() {
-    const stats = await getComprehensiveStats();
+export function DashboardData() {
+    const [stats, setStats] = useState<Awaited<ReturnType<typeof getComprehensiveStats>> | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+    const fetchStats = async () => {
+        try {
+            const data = await getComprehensiveStats();
+            setStats(data);
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    };
+
+    // FIX: Ensure we're on client before rendering
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    // FIX: Auto-refresh every 10 seconds (only after client mount)
+    useEffect(() => {
+        if (!isClient) return;
+
+        fetchStats();
+        setIsLoading(false);
+
+        const interval = setInterval(fetchStats, 10000); // 10 seconds
+        return () => clearInterval(interval);
+    }, [isClient]);
+
+    const handleManualRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchStats();
+        setIsRefreshing(false);
+    };
+
+    // FIX: Show skeleton until client-side hydration is complete
+    if (!isClient || isLoading || !stats) {
+        return <DashboardSkeleton />;
+    }
 
     const calculatePercentage = (value: number, total: number) => {
         if (total === 0) return '0';
@@ -17,6 +60,19 @@ export async function DashboardData() {
 
     return (
         <div className="space-y-6">
+            {/* FIX: Add manual refresh button */}
+            <div className="flex justify-end">
+                <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleManualRefresh}
+                    disabled={isRefreshing}
+                >
+                    <RotateCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    {isRefreshing ? 'Refreshing...' : 'Refresh Stats'}
+                </Button>
+            </div>
+
             {/* Top Row: Key Metrics */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <Card>

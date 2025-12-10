@@ -109,6 +109,9 @@ export function SubscribersTable({
   onSelectAll,
 }: SubscribersTableProps) {
   
+  // FIX: Show pagination if there are results or navigation possible
+  const showPagination = hasNextPage || hasPrevPage;
+
   return (
     <div>
       {isLoading ? <TableSkeleton /> : (
@@ -132,33 +135,41 @@ export function SubscribersTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subscribers.map((subscriber: Subscriber) => (
-                <TableRow key={subscriber.id}>
-                  {isSelectMode && <TableCell><Checkbox checked={selectedIds.includes(subscriber.id)} onCheckedChange={() => handleSelect(subscriber.id)} /></TableCell>}
-                  <TableCell className="font-medium">{subscriber.fullName}</TableCell>
-                  <TableCell>{subscriber.email}</TableCell>
-                  <TableCell>{subscriber.status}</TableCell>
-                  <TableCell>{format(new Date(subscriber.createdAt), 'PPp')}</TableCell>
-                  {!isSelectMode && (
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onEdit(subscriber.id)}>Edit</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-500" onClick={() => onDelete(subscriber.id)}>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  )}
+              {subscribers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={isSelectMode ? 6 : 5} className="text-center py-8 text-muted-foreground">
+                    No subscribers found
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                subscribers.map((subscriber: Subscriber) => (
+                  <TableRow key={subscriber.id}>
+                    {isSelectMode && <TableCell><Checkbox checked={selectedIds.includes(subscriber.id)} onCheckedChange={() => handleSelect(subscriber.id)} /></TableCell>}
+                    <TableCell className="font-medium">{subscriber.fullName}</TableCell>
+                    <TableCell>{subscriber.email}</TableCell>
+                    <TableCell>{subscriber.status}</TableCell>
+                    <TableCell>{format(new Date(subscriber.createdAt), 'PPp')}</TableCell>
+                    {!isSelectMode && (
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => onEdit(subscriber.id)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-500" onClick={() => onDelete(subscriber.id)}>Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
       )}
 
-      {/* FIX: Simple Next/Previous Pagination */}
-      {!isCountLoading && (
+      {/* FIX: Show pagination only when there are multiple pages */}
+      {!isCountLoading && showPagination && (
         <div className="flex items-center justify-between mt-4">
           <div className="text-sm text-muted-foreground">
             Page <span className="font-semibold">{currentPage}</span>

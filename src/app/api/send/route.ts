@@ -89,8 +89,8 @@ export async function POST(request: Request) {
             return;
           }
 
-          const senderName = entity === 'All' ? 'Spectrum' : entity;
-          const fromAddress = `${senderName} Newsletter <${newsletterEmailAdrs}>`;
+          const senderName = entity === 'All' ? 'Spectrum UAE' : entity;
+          const fromAddress = `${senderName} Team <${newsletterEmailAdrs}>`;
 
           // Create a batch of personalized emails
           const emailBatch = subscribers.map(subscriber => {

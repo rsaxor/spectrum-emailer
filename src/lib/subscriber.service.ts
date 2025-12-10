@@ -61,25 +61,33 @@ export async function getSubscribersPaginated(
   try {
     const subscribersCollectionRef = collection(db, 'subscribers');
     
-    let q: Query<DocumentData> = query(subscribersCollectionRef);
+    // FIX: Build query efficiently with proper ordering
+    let constraints: any[] = [];
 
     // Apply filter
     if (status) {
-      q = query(q, where('status', '==', status));
+      constraints.push(where('status', '==', status));
     }
     
-    // Apply sorting
-    q = query(q, orderBy(sortBy, orderDir));
+    // Apply sorting (MUST come before pagination)
+    constraints.push(orderBy(sortBy, orderDir));
 
-    // Apply pagination
+    // FIX: Apply pagination cursor AFTER orderBy
     if (lastVisible) {
-      q = query(q, startAfter(lastVisible));
+      constraints.push(startAfter(lastVisible));
     }
-    q = query(q, limit(limitSize));
+    
+    // Limit results
+    constraints.push(limit(limitSize + 1)); // +1 to detect if there are more pages
 
+    const q = query(subscribersCollectionRef, ...constraints);
     const querySnapshot = await getDocs(q);
 
-    const subscribers: Subscriber[] = querySnapshot.docs.map((doc) => ({
+    // FIX: Check if there are more results beyond the limit
+    const hasMore = querySnapshot.docs.length > limitSize;
+    const docsToReturn = hasMore ? querySnapshot.docs.slice(0, limitSize) : querySnapshot.docs;
+
+    const subscribers: Subscriber[] = docsToReturn.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate(),
@@ -87,11 +95,12 @@ export async function getSubscribersPaginated(
 
     return {
       subscribers,
-      lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+      lastVisible: docsToReturn[docsToReturn.length - 1],
+      hasMore,
     };
   } catch (error) {
     console.error("Error fetching subscribers:", error);
-    return { subscribers: [], lastVisible: null };
+    return { subscribers: [], lastVisible: null, hasMore: false };
   }
 }
 

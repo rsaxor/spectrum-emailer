@@ -133,8 +133,8 @@ export async function POST(request: Request) {
           html: testFinalHtml
       });
     } else {
-      const senderName = currentEntity === 'All' ? 'Spectrum' : currentEntity;
-      const fromAddress = `${senderName} <${newsletterEmailAdrs}>`;
+      const senderName = currentEntity === 'All' ? 'Spectrum UAE' : currentEntity;
+      const fromAddress = `${senderName} Team <${newsletterEmailAdrs}>`;
       await resend.emails.send({
           from: fromAddress,
           to: email,

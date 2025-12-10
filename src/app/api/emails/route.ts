@@ -14,14 +14,30 @@ export async function GET(request: Request) {
     const filenames = await fs.readdir(emailsDirectory);
     const htmlFiles = filenames.filter(file => file.endsWith('.html'));
 
-    // FIX: Use consistent build timestamp instead of mtime
-    // All templates use the same "created" date when bundled
-    const buildTime = new Date(2025, 0, 1); // Jan 1, 2025
+    // FIX: Use actual file stats in development, fixed date in production
+    const isProduction = process.env.NODE_ENV === 'production';
+    const productionBuildTime = new Date(2025, 0, 1); // Jan 1, 2025 for production
 
-    const templatesWithDetails = htmlFiles.map((file) => ({
-      name: file,
-      createdAt: buildTime, // Use consistent timestamp
-    }));
+    const templatesWithDetails = await Promise.all(
+      htmlFiles.map(async (file) => {
+        let createdAt: Date;
+
+        if (isProduction) {
+          // Production: use fixed build timestamp
+          createdAt = productionBuildTime;
+        } else {
+          // Development: use actual file modification time
+          const filePath = path.join(emailsDirectory, file);
+          const stats = await fs.stat(filePath);
+          createdAt = stats.mtime;
+        }
+
+        return {
+          name: file,
+          createdAt,
+        };
+      })
+    );
 
     // Sort the templates
     templatesWithDetails.sort((a, b) => {

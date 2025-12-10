@@ -37,6 +37,7 @@ import {
 import { useEntity } from '@/context/EntityContext';
 import { fetchWithTimeout } from '@/lib/fetch-with-timeout';
 import { REQUEST_TIMEOUTS } from '@/lib/constants';
+import { getNewsletterJob, saveNewsletterJob, clearNewsletterJob } from '@/lib/newsletter-state';
 
 type Template = {
   name: string;
@@ -58,19 +59,40 @@ function SortableHeader({
 }) {
   const isSorting = sortBy === value;
   return (
-    <TableHead
+    <TableHead 
       onClick={() => onClick(value)}
       className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
     >
       <div className="flex items-center gap-2">
         {label}
-        <ArrowUpDown
-          className={`h-4 w-4 text-muted-foreground ${
-            isSorting ? "text-foreground" : ""
-          }`}
-        />
+        <ArrowUpDown className={`h-4 w-4 text-muted-foreground ${isSorting ? 'text-foreground' : ''}`} />
       </div>
     </TableHead>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-24 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-40 animate-pulse" /></TableHead>
+            <TableHead><Skeleton className="h-5 bg-gray-500 w-16 animate-pulse" /></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...Array(10)].map((_, i) => (
+            <TableRow key={i}>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-32 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-5 bg-gray-500 w-48 animate-pulse" /></TableCell>
+              <TableCell><Skeleton className="h-8 bg-gray-500 w-8 animate-pulse" /></TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
@@ -81,9 +103,7 @@ export default function SendNewsletterContent() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(
-    null
-  );
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [sendStatus, setSendStatus] = useState("subscribed");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -93,10 +113,10 @@ export default function SendNewsletterContent() {
   const searchParams = useSearchParams();
   const { entity } = useEntity();
 
-  const page = Number(searchParams.get("page")) || 1;
+  const page = Number(searchParams.get('page')) || 1;
   const limit = 10;
-  const sortBy = searchParams.get("sortBy") || "createdAt";
-  const order = searchParams.get("order") || "desc";
+  const sortBy = searchParams.get('sortBy') || 'createdAt';
+  const order = searchParams.get('order') || 'desc';
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -126,25 +146,51 @@ export default function SendNewsletterContent() {
     fetchData();
   }, [fetchData]);
 
+  // FIX: Resume job on mount if it exists
+  useEffect(() => {
+    const activeJob = getNewsletterJob();
+    if (activeJob) {
+      const toastId = toast.loading(
+        `Resuming... ${activeJob.sentCount || 0}/${activeJob.totalSubscribers}`
+      );
+      pollJobStatus(activeJob.jobId, toastId);
+    }
+  }, []);
+
   const handleSortChange = (newSortBy: string) => {
-    const newOrder =
-      sortBy === newSortBy && order === "desc" ? "asc" : "desc";
+    const newOrder = sortBy === newSortBy && order === 'desc' ? 'asc' : 'desc';
     const params = new URLSearchParams(searchParams.toString());
-    params.set("sortBy", newSortBy);
-    params.set("order", newOrder);
-    params.set("page", "1");
+    params.set('sortBy', newSortBy);
+    params.set('order', newOrder);
+    params.set('page', '1');
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
+    params.set('page', String(page));
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleSendClick = (templateName: string) => {
     setSelectedTemplate(templateName);
     setIsAlertOpen(true);
+  };
+
+  const triggerBatchSend = async () => {
+    try {
+      const response = await fetchWithTimeout(
+        '/.netlify/functions/send-newsletters-batch',
+        { timeout: REQUEST_TIMEOUTS.LONG }
+      );
+      if (!response.ok) {
+        throw new Error('Failed to trigger batch send');
+      }
+      toast.success('Batch send triggered! Processing in background...');
+    } catch (error) {
+      console.error('Trigger error:', error);
+      toast.error('Failed to trigger batch send');
+    }
   };
 
   const handleProceedSend = async () => {
@@ -171,97 +217,117 @@ export default function SendNewsletterContent() {
 
       const data = await res.json();
       const jobId = data.jobId;
-      const totalSubscribers = data.totalSubscribers; // Get total from response
+      const totalSubscribers = data.totalSubscribers;
 
-      // FIX STEP 2: Start with faster initial poll
-      const pollJobStatus = async (jobId: string) => {
-        let interval = 100; // START FAST: 100ms instead of 2000ms
-        const minInterval = 100;
-        const maxInterval = 10000;
-        let done = false;
-        const maxPollTime = REQUEST_TIMEOUTS.LONG; // 2 minutes max
-        const startTime = Date.now();
-        let consecutiveNoChange = 0; // Track if progress is stalling
+      // FIX: Save job state IMMEDIATELY after creation
+      saveNewsletterJob({
+        jobId,
+        totalSubscribers,
+        sentCount: 0,
+        createdAt: Date.now(),
+      });
 
-        while (!done) {
-          // Check if polling has exceeded max time
-          if (Date.now() - startTime > maxPollTime) {
-            toast.warning(
-              "Poll timeout: Job is still processing. Check status manually.",
-              { id: toastId }
-            );
-            done = true;
-            break;
-          }
-
-          try {
-            const res = await fetchWithTimeout(
-              `/api/job-status?id=${jobId}`,
-              { timeout: REQUEST_TIMEOUTS.SHORT }
-            );
-            const statusData = await res.json();
-
-            // FIX STEP 3: Early exit when sent count matches total
-            if (
-              statusData.sentCount >= statusData.totalSubscribers ||
-              statusData.status === "completed"
-            ) {
-              toast.success(
-                `Sent ${statusData.sentCount}/${statusData.totalSubscribers}!`,
-                { id: toastId }
-              );
-              done = true;
-            } else if (statusData.status === "failed") {
-              toast.error(`Job failed: ${statusData.error || "Unknown error"}`, {
-                id: toastId,
-              });
-              done = true;
-            } else {
-              // Show progress
-              toast.loading(
-                `Sending... ${statusData.sentCount}/${statusData.totalSubscribers}`,
-                { id: toastId }
-              );
-
-              // FIX STEP 4: Dynamic backoff based on progress
-              // If progress is being made, poll faster
-              if (statusData.sentCount > 0) {
-                consecutiveNoChange = 0;
-                // Progress detected: increase poll frequency slightly
-                interval = Math.max(minInterval, interval * 0.9);
-              } else {
-                // No progress yet: back off slowly
-                consecutiveNoChange++;
-                if (consecutiveNoChange > 3) {
-                  interval = Math.min(interval * 1.5, maxInterval);
-                }
-              }
-            }
-
-            // Clamp interval within bounds
-            interval = Math.max(minInterval, Math.min(interval, maxInterval));
-            
-            await new Promise(r => setTimeout(r, interval));
-          } catch (err) {
-            console.error("Poll error:", err);
-            // On error, back off more aggressively
-            interval = Math.min(interval * 2, maxInterval);
-            await new Promise(r => setTimeout(r, interval));
-          }
-        }
-
-        setIsSending(false);
-        setSelectedTemplate(null);
-        setSubject("");
-      };
-
-      pollJobStatus(jobId);
+      await triggerBatchSend();
+      
+      await pollJobStatus(jobId, toastId);
     } catch (error) {
       console.error("Send error:", error);
       const message = error instanceof Error ? error.message : "Failed to send newsletter.";
       toast.error(message, { id: toastId });
       setIsSending(false);
+      clearNewsletterJob();
     }
+  };
+
+  const pollJobStatus = async (jobId: string, toastId: string | number) => {
+    let interval = 100;
+    const minInterval = 100;
+    const maxInterval = 10000;
+    let done = false;
+    const maxPollTime = REQUEST_TIMEOUTS.LONG;
+    const startTime = Date.now();
+    let consecutiveNoChange = 0;
+
+    while (!done) {
+      if (Date.now() - startTime > maxPollTime) {
+        toast.warning(
+          "Poll timeout: Job is still processing. Check status manually.",
+          { id: toastId }
+        );
+        clearNewsletterJob();
+        done = true;
+        break;
+      }
+
+      try {
+        const res = await fetchWithTimeout(
+          `/api/job-status?id=${jobId}`,
+          { timeout: REQUEST_TIMEOUTS.SHORT }
+        );
+        const statusData = await res.json();
+
+        // FIX: Update localStorage with current progress
+        saveNewsletterJob({
+          jobId,
+          totalSubscribers: statusData.totalSubscribers,
+          sentCount: statusData.sentCount,
+          createdAt: Date.now(),
+        });
+
+        if (
+          statusData.sentCount >= statusData.totalSubscribers ||
+          statusData.status === "completed"
+        ) {
+          // FIX: Keep toast visible, don't close automatically
+          toast.success(
+            `Successfully sent ${statusData.sentCount}/${statusData.totalSubscribers} emails!`,
+            { 
+              id: toastId,
+              duration: Infinity, // Keep toast visible indefinitely
+            }
+          );
+          clearNewsletterJob();
+          done = true;
+        } else if (statusData.status === "failed") {
+          toast.error(`Job failed: ${statusData.error || "Unknown error"}`, {
+            id: toastId,
+            duration: Infinity, // Keep visible
+          });
+          clearNewsletterJob();
+          done = true;
+        } else {
+          // FIX: Don't close automatically while processing
+          toast.loading(
+            `Sending... ${statusData.sentCount}/${statusData.totalSubscribers}`,
+            { 
+              id: toastId,
+              duration: Infinity, // Keep loading toast visible
+            }
+          );
+
+          if (statusData.sentCount > 0) {
+            consecutiveNoChange = 0;
+            interval = Math.max(minInterval, interval * 0.9);
+          } else {
+            consecutiveNoChange++;
+            if (consecutiveNoChange > 3) {
+              interval = Math.min(interval * 1.5, maxInterval);
+            }
+          }
+        }
+
+        interval = Math.max(minInterval, Math.min(interval, maxInterval));
+        await new Promise(r => setTimeout(r, interval));
+      } catch (err) {
+        console.error("Poll error:", err);
+        interval = Math.min(interval * 2, maxInterval);
+        await new Promise(r => setTimeout(r, interval));
+      }
+    }
+
+    setIsSending(false);
+    setSelectedTemplate(null);
+    setSubject("");
   };
 
   const totalPages = Math.ceil(data.total / limit);
@@ -348,23 +414,28 @@ export default function SendNewsletterContent() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page <= 1 || isLoading}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page >= totalPages || isLoading}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-between mt-4">
+          <div className="text-sm text-muted-foreground">
+            Page <span className="font-semibold">{page}</span>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page <= 1 || isLoading}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page >= totalPages || isLoading}
+            >
+              Next
+            </Button>
+          </div>
         </div>
 
         <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>

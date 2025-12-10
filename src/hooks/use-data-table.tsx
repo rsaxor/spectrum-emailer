@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { getSubscribersPaginated, getSubscribersCount, Subscriber, searchSubscribers } from '@/lib/subscriber.service';
 
 const PAGE_SIZE = 10;
 
 type SubscriberStatus = 'subscribed' | 'unsubscribed' | 'pending';
+
+// FIX: Cache for count results to avoid repeated queries
+const countCache = new Map<string, { value: number; timestamp: number }>();
+const CACHE_TTL = 5000; // 5 seconds
 
 export function useDataTable() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -16,6 +20,9 @@ export function useDataTable() {
   const [isClient, setIsClient] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  
+  // FIX: Store pagination cursors for each page
+  const cursorsRef = useRef<Map<number, any>>(new Map());
 
   const router = useRouter();
   const pathname = usePathname();
@@ -25,6 +32,20 @@ export function useDataTable() {
   const currentPage = Math.max(Number(searchParams.get('page')) || 1, 1);
   const sortBy = searchParams.get('sortBy') || 'createdAt';
   const order = searchParams.get('order') === 'asc' ? 'asc' : 'desc';
+
+  // FIX: Cached count fetch with TTL
+  const getCachedCount = useCallback(async (filterStatus?: SubscriberStatus): Promise<number> => {
+    const cacheKey = filterStatus || 'all';
+    const cached = countCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      return cached.value;
+    }
+
+    const count = await getSubscribersCount(filterStatus);
+    countCache.set(cacheKey, { value: count, timestamp: Date.now() });
+    return count;
+  }, []);
 
   const fetchData = useCallback(
     async (
@@ -38,33 +59,40 @@ export function useDataTable() {
       setIsSearching(!!currentSearchQuery);
 
       try {
-        // Calculate offset for pagination
-        const offset = (page - 1) * PAGE_SIZE;
-
         let subscribers: Subscriber[];
+        let searchResultCount = 0;
         
         if (currentSearchQuery) {
-          // Search mode: fetch ALL matching results from database and paginate client-side
-          // FIX: Removed artificial limit - now searches entire database
+          // Search mode: fetch ALL matching results
           const { subscribers: allResults } = await searchSubscribers(
             currentSearchQuery,
             currentStatus,
-            PAGE_SIZE, // This is the page size we'll display
-            currentSortBy,
-            currentOrder
-          );
-          
-          // Client-side pagination of ALL search results
-          subscribers = allResults.slice(offset, offset + PAGE_SIZE);
-        } else {
-          // Normal mode: use server-side pagination
-          const { subscribers: results } = await getSubscribersPaginated(
-            currentStatus,
-            undefined,
             PAGE_SIZE,
             currentSortBy,
             currentOrder
           );
+          
+          searchResultCount = allResults.length;
+          subscribers = allResults.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+          setTotalCount(searchResultCount);
+        } else {
+          // FIX: Normal mode - use cursor-based pagination properly
+          // Get cursor for previous page
+          const previousPageCursor = page > 1 ? cursorsRef.current.get(page - 1) : null;
+          
+          const { subscribers: results, lastVisible } = await getSubscribersPaginated(
+            currentStatus,
+            previousPageCursor,
+            PAGE_SIZE,
+            currentSortBy,
+            currentOrder
+          );
+          
+          // FIX: Store cursor for next pagination
+          if (lastVisible) {
+            cursorsRef.current.set(page, lastVisible);
+          }
+          
           subscribers = results;
         }
 
@@ -93,21 +121,25 @@ export function useDataTable() {
       setIsLoading(true);
 
       try {
-        const count = await getSubscribersCount(status);
-        if (!isCancelled) {
-          setTotalCount(count);
+        // FIX: Only fetch count for non-search queries
+        if (!searchParams.get('q')) {
+          const count = await getCachedCount(status);
+          
+          if (!isCancelled) {
+            setTotalCount(count);
 
-          // FIX: Simple page validation
-          const maxPages = Math.ceil(count / PAGE_SIZE);
-          if (currentPage > maxPages && maxPages > 0) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set('page', String(maxPages));
-            router.replace(`${pathname}?${params.toString()}`);
-            return;
+            // FIX: Validate page number only when not searching
+            const maxPages = Math.ceil(count / PAGE_SIZE);
+            if (currentPage > maxPages && maxPages > 0) {
+              const params = new URLSearchParams(searchParams.toString());
+              params.set('page', String(maxPages));
+              router.replace(`${pathname}?${params.toString()}`);
+              return;
+            }
           }
-
-          await fetchData(currentPage, status, sortBy, order, searchQuery);
         }
+
+        await fetchData(currentPage, status, sortBy, order, searchParams.get('q') || '');
       } catch (error) {
         console.error('Failed to fetch subscribers:', error);
       } finally {
@@ -122,7 +154,7 @@ export function useDataTable() {
     return () => {
       isCancelled = true;
     };
-  }, [searchParams, isClient, fetchData, currentPage, status, sortBy, order, pathname, router, searchQuery]);
+  }, [searchParams, isClient, fetchData, currentPage, status, sortBy, order, pathname, router, getCachedCount]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -131,6 +163,9 @@ export function useDataTable() {
   };
 
   const handleSortChange = (newSortBy: string) => {
+    // FIX: Clear cursor cache when sorting changes
+    cursorsRef.current.clear();
+    
     const params = new URLSearchParams(searchParams.toString());
     const currentOrder = params.get('order') === 'asc' ? 'asc' : 'desc';
 
@@ -147,6 +182,8 @@ export function useDataTable() {
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
+    // FIX: Clear cursor cache when searching
+    cursorsRef.current.clear();
     
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', '1');
@@ -167,9 +204,8 @@ export function useDataTable() {
       return newList;
     });
 
-    getSubscribersCount(status).then(count => {
-      setTotalCount(count);
-    });
+    // FIX: Invalidate cache on new subscriber
+    countCache.clear();
   };
 
   const pageCount = Math.ceil(totalCount / PAGE_SIZE);
