@@ -84,7 +84,7 @@ export const handler = async () => {
 
     for (const chunk of subscriberChunks) {
       const emailBatch = chunk.map(sub => {
-        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${sub.id}`;
+        const unsubscribeLink = `${baseUrl}/unsubscribe?id=${sub.id}&entity=${job.entity}`;
         const personalizedHtml = htmlBody
           .replace(/{{fullName}}/g, sub.fullName)
           .replace(/{{unsubscribeLink}}/g, unsubscribeLink)
