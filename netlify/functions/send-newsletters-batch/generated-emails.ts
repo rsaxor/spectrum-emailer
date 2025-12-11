@@ -1440,6 +1440,354 @@ emailTemplates.set('spec0004.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
 </body>
 
 </html>`);
+emailTemplates.set('tcc0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.5, target-densitydpi=device-dpi, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>
+        
+    </title>
+    <style type="text/css">
+        body {
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            border-collapse: collapse;
+        }
+
+        .yshortcuts a {
+            border-bottom: none !important;
+        }
+
+        .hline {
+            width: 100%;
+        }
+
+
+        /* Constrain email width for small screens */
+        @media screen and (max-width: 660px) {
+            table[class="container"] {
+                width: 95% !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Give content more room on mobile */
+        @media screen and (max-width: 480px) {
+            td[class="container-padding"] {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Styles for forcing columns to rows */
+        @media only screen and (max-width : 660px) {
+
+            /* force container columns to (horizontal) blocks */
+            td[class="force-col"] {
+                width: 100% !important;
+                display: block;
+                padding-right: 0 !important;
+            }
+
+            table[class="col-1"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[class="col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 95% !important;
+            }
+
+            /* remove bottom border for last column/row */ 
+            table[class="row2col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[id="last-col-2"] {
+                float: none !important;
+                border-bottom: none !important;
+                margin-bottom: 0;
+            }
+
+            /* align images right and shrink them a bit */
+            img[class="col-2-img"] {
+                float: right;
+                margin-left: 6px;
+                max-width: 130px;
+            }
+
+            img[class="main-img"] {
+                width: 100%;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+
+            img[class="col-main-img"] {
+                width: 100%;
+            }
+        }
+
+        sup {
+            line-height: 1;
+            font-size: 70%;
+            vertical-align: top;
+            mso-text-raise: 60%;
+        }
+
+        u+.body .glist {
+            margin-left: 0 !important;
+        }
+
+        @media only screen and (max-width: 640px) {
+            u+.body .glist {
+                margin-left: 25px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin:0;" topmargin="0" marginwidth="0" marginheight="0" leftmargin="0">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fbfbfb">
+        <tr>
+            <td align="center" valign="top">
+                <table class="container" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
+                    <tr>
+                        <td>
+                            <img src="{{host}}/newsletter/tcc0001/0001-01.jpg" width="600" height="429" alt="Warm Greetings from The Card Co.">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="520" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 13px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin: 0; padding: 0; text-align: center;">
+                                            <b>Festive & Fresh: Your Holiday Gifting and 2026 Planning Starts Here!</b>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 12px; text-align: justify; line-height: 1.3; padding-left: 40px; padding-right: 40px">
+                                        <p style="margin: 0; padding: 0; text-align: center;">
+                                            Step into The Card Co's festive collection, curated pieces for him and her, from personalised Christmas cards to monogrammed journals and 2026 day planners. Discover Limited Edition treasures, greeting cards and elegant pens designed to complete your holiday gifting in one thoughtful sweep.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="20"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #B70000; font-family: Arial,Helvetica, sans-serif; font-size: 12px; text-align: justify; line-height: 1.3; padding-left: 40px; padding-right: 40px">
+                                        <p style="margin: 0; padding: 0; text-align: center;">
+                                            <b>Plan Ahead: January 2026 Bookings Now Open</b>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="10"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 12px; text-align: justify; line-height: 1.3; padding-left: 40px; padding-right: 40px">
+                                        <p style="margin: 0; padding: 0; text-align: center;">
+                                            Ready to kickstart the New Year? <br>
+                                            We are now accepting bookings for January 2026 consultations. <br>
+                                            Secure your spot today to discuss your next custom project!
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a target="_blank" href="https://thecardco.setmore.com/">
+                                            <img src="{{host}}/newsletter/tcc0001/0001-02.jpg" width="150" height="26" alt="Book Now">
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="https://www.thecardco.ae/shop/" target="_blank"><img src="{{host}}/newsletter/tcc0001/0001-03.jpg" width="520" height="152" alt="The exlusive holiday collection"></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 12px; text-align: justify; line-height: 1.3; padding-left: 110px; padding-right: 110px">
+                                        <p style="margin: 0; padding: 0; text-align: center;">Get ready for the most wonderful time of the year with The Card Co's exclusive Christmas Gift Collections!</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <table width="460" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td align="left">
+                                                    <a href="https://www.thecardco.ae/product-page/travel-gift-set" target="_blank">
+                                                        <img src="{{host}}/newsletter/tcc0001/0001-04.jpg" width="215" height="213" alt="Travel Gift Set">
+                                                    </a>
+                                                </td>
+                                                <td align="right">
+                                                    <a href="https://www.thecardco.ae/product-page/crafter-vegan-leather-notebook-lined" target="_blank">
+                                                        <img src="{{host}}/newsletter/tcc0001/0001-05.jpg" width="215" height="213" alt="Crafted Vegan Leather Notebook">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" height="30"></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="left">
+                                                    <a href="https://www.thecardco.ae/product-page/weekly-planner" target="_blank">
+                                                        <img src="{{host}}/newsletter/tcc0001/0001-06.jpg" width="215" height="213" alt="Weekly Planner">
+                                                    </a>
+                                                </td>
+                                                <td align="right">
+                                                    <a href="https://www.thecardco.ae/product-page/fountain-wood-themed" target="_blank">
+                                                        <img src="{{host}}/newsletter/tcc0001/0001-07.jpg" width="215" height="213" alt="Fountain Pen - Wood Themed">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://www.thecardco.ae/shop">
+                                            <img src="{{host}}/newsletter/tcc0001/0001-08.jpg" width="150" height="26" alt="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="40"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="470" cellspacing="0" cellpadding="0">
+                                <tr bgcolor="#000000">
+                                    <td height="1"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="20"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="470" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center">
+                                        <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                            <li style="margin:0 5px; display:inline-block;">
+                                                <a href="https://www.instagram.com/thecardco/" target="_blank">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-9.png" alt="instagram">
+                                                </a>
+                                            </li>
+                                            <li style="margin:0 5px; display:inline-block;">
+                                                <a href="https://www.facebook.com/TheCardCo/" target="_blank">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-10.png" alt="facebook">
+                                                </a>
+                                            </li>
+                                            <li style="margin:0 5px; display:inline-block;">
+                                                <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-11.png" alt="linkedin">
+                                                </a>
+                                            </li>
+                                            <li style="margin:0 5px; display:inline-block;">
+                                                <a href="https://www.pinterest.com/thecardco/" target="_blank">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-12.png" alt="pinterest">
+                                                </a>
+                                            </li>
+                                            <li style="margin:0 5px; display:inline-block;">
+                                                <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-13.png" alt="youtube">
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
+                                            Copyright (C) 2025 <a href="https://thecardco.ae/" target="_blank" style="color: #707070; text-decoration: none;;">The Card Co.</a> All rights reserved.
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            You are receiving this message for any of the following reasons: <br>
+                                            we have provided you with our services in the past or you are a valued client, <br>
+                                            you opted in or interacted with us via our website
+                                        </p>
+                                        <p style="margin-bottom: 3px; margin-top: 0; text-align: center;">
+                                            Our mailing address is:
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            The Card Co, DIFC, Level B1, The Gate Building Gate Avenue, Dubai - UAE
+                                        </p>
+                                        <p style="margin-bottom: 0; margin-top: 0; text-align: center;">
+                                            Click here <a href="{{unsubscribeLink}}" style="color: #4692db;">unsubscribe</a>.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`);
 emailTemplates.set('test-spectrum-2025-09-16.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
