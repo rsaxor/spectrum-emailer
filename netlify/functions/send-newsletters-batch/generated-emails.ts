@@ -1721,7 +1721,7 @@ emailTemplates.set('tcc0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                             <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center">
-                                        <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                        <ul width="142" style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.instagram.com/thecardco/" target="_blank">
                                                     <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-9.png" alt="instagram">
