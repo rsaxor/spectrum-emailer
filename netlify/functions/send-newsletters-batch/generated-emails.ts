@@ -1639,8 +1639,8 @@ emailTemplates.set('tcc0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 <tr>
                                     <td height="30"></td>
                                 </tr>
-                                <tr>
-                                    <td>
+                                <tr align="center">
+                                    <td align="center">
                                         <a href="https://www.thecardco.ae/shop/" target="_blank"><img src="{{host}}/newsletter/tcc0001/0001-03.jpg" width="520" height="152" alt="The exlusive holiday collection"></a>
                                     </td>
                                 </tr>
@@ -1721,33 +1721,39 @@ emailTemplates.set('tcc0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                             <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center">
-                                        <ul width="142" style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.instagram.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-9.png" alt="instagram">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.facebook.com/TheCardCo/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-10.png" alt="facebook">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-11.png" alt="linkedin">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.pinterest.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-12.png" alt="pinterest">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-13.png" alt="youtube">
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <table width="142" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td>
+                                                    <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.instagram.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-9.png" alt="instagram">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.facebook.com/TheCardCo/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-10.png" alt="facebook">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-11.png" alt="linkedin">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.pinterest.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-12.png" alt="pinterest">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0001/00001-13.png" alt="youtube">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
