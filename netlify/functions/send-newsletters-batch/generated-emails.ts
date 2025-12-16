@@ -1582,7 +1582,7 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr align="left" valign="top">
                                     <td>
                                         <a href="https://spectrumdubai.com?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank">
-                                            <img src="{{host}}/newsletter/spec0003/0005-01.jpg" height="437" alt="Spectrum UAE Ltd. Office" width="496">
+                                            <img src="{{host}}/newsletter/spec0005/0005-01.jpg" height="437" alt="Spectrum UAE Ltd. Office" width="496">
                                         </a>
                                     </td>
                                     <td style="padding-left: 15px; padding-right: 15px;">
@@ -1593,7 +1593,7 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                             <tr>
                                                 <td>
                                                     <a href="https://spectrumdubai.com?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005">
-                                                        <img src="{{host}}/newsletter/spec0003/0005-02.png" alt="Spectrum UAE Ltd. Logo" width="74" height="58">
+                                                        <img src="{{host}}/newsletter/spec0005/0005-02.png" alt="Spectrum UAE Ltd. Logo" width="74" height="58">
                                                     </a>
                                                 </td>
                                             </tr>
@@ -1677,7 +1677,7 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr>
                                     <td align="center">
                                         <a href="https://spectrumdubai.com/contact?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005">
-                                            <img src="{{host}}/newsletter/spec0003/0005-03.jpg" alt="Book Now" width="125" height="32">
+                                            <img src="{{host}}/newsletter/spec0005/0005-03.jpg" alt="Book Now" width="125" height="32">
                                         </a>
                                     </td>
                                 </tr>
@@ -1693,13 +1693,13 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr>
                                     <td align="left">
                                         <a href="https://spectrumdubai.com/services/printing-press?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank" style="text-decoration: none;">
-                                            <img src="{{host}}/newsletter/spec0003/0005-04.jpg" width="215" height="164" alt="BRAND LABELS">
+                                            <img src="{{host}}/newsletter/spec0005/0005-04.jpg" width="215" height="164" alt="BRAND LABELS">
                                             <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.25; text-align: center; margin-top: 15px; margin-bottom: 0; padding: 0;">BRAND LABELS</p>
                                         </a>
                                     </td>
                                     <td align="right">
                                         <a href="https://spectrumdubai.com/services/luxury-packaging?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank" style="text-decoration: none;">
-                                            <img src="{{host}}/newsletter/spec0003/0005-05.jpg" width="215" height="164" alt="VIP BOXES">
+                                            <img src="{{host}}/newsletter/spec0005/0005-05.jpg" width="215" height="164" alt="VIP BOXES">
                                             <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.25; text-align: center; margin-top: 15px; margin-bottom: 0; padding: 0;">VIP BOXES</p>
                                         </a>
                                     </td>
@@ -1710,13 +1710,13 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr>
                                     <td align="left">
                                         <a href="https://spectrumdubai.com/services/printing-press/book-printing?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank" style="text-decoration: none;">
-                                            <img src="{{host}}/newsletter/spec0003/0005-06.jpg" width="215" height="164" alt="BOOKS">
+                                            <img src="{{host}}/newsletter/spec0005/0005-06.jpg" width="215" height="164" alt="BOOKS">
                                             <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.25; text-align: center; margin-top: 15px; margin-bottom: 0; padding: 0;">BOOKS</p>
                                         </a>
                                     </td>
                                     <td align="right">
                                         <a href="https://spectrumdubai.com/services/printing-press/menus?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank" style="text-decoration: none;">
-                                            <img src="{{host}}/newsletter/spec0003/0005-07.jpg" width="215" height="164" alt="MENUS">
+                                            <img src="{{host}}/newsletter/spec0005/0005-07.jpg" width="215" height="164" alt="MENUS">
                                             <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.25; text-align: center; margin-top: 15px; margin-bottom: 0; padding: 0;">MENUS</p>
                                         </a>
                                     </td>
@@ -1744,7 +1744,7 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                 <tr>
                                     <td align="center">
                                         <a href="https://spectrumdubai.com/services/sustainable-printing?utm_source=newsletter&utm_medium=email&utm_campaign=the_year_we_print_bigger&utm_id=spec0005" target="_blank"  >
-                                            <img src="{{host}}/newsletter/spec0003/0005-08.jpg" alt="Learn More" width="140" height="36">
+                                            <img src="{{host}}/newsletter/spec0005/0005-08.jpg" alt="Learn More" width="140" height="36">
                                         </a>
                                     </td>
                                 </tr>
@@ -1766,27 +1766,27 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                         <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.instagram.com/spectrum_print" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0003/0005-9.png" alt="instagram">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-9.png" alt="instagram">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="http://www.facebook.com/spectrumuae" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0003/0005-10.png" alt="facebook">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-10.png" alt="facebook">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="http://www.linkedin.com/company/spectrum-printing-press" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0003/0005-11.png" alt="linkedin">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-11.png" alt="linkedin">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.pinterest.com/spectrumuae" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0003/0005-12.png" alt="pinterest">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-12.png" alt="pinterest">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.youtube.com/channel/UCj20ViMQ2bknI3E6zIdoZWA" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0003/0005-13.png" alt="youtube">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-13.png" alt="youtube">
                                                 </a>
                                             </li>
                                         </ul>
