@@ -1763,55 +1763,67 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                             <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center">
-                                        <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.instagram.com/spectrum_print" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-9.png" alt="instagram">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="http://www.facebook.com/spectrumuae" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-10.png" alt="facebook">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="http://www.linkedin.com/company/spectrum-printing-press" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-11.png" alt="linkedin">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.pinterest.com/spectrumuae" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-12.png" alt="pinterest">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.youtube.com/channel/UCj20ViMQ2bknI3E6zIdoZWA" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-13.png" alt="youtube">
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <table width="142" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td align="center">
+                                                    <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.instagram.com/spectrum_print" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-9.png" alt="instagram">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="http://www.facebook.com/spectrumuae" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-10.png" alt="facebook">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="http://www.linkedin.com/company/spectrum-printing-press" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-11.png" alt="linkedin">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.pinterest.com/spectrumuae" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-12.png" alt="pinterest">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.youtube.com/channel/UCj20ViMQ2bknI3E6zIdoZWA" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0005/0005-13.png" alt="youtube">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td height="15"></td>
                                 </tr>
                                 <tr>
-                                    <td
-                                        style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
-                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
-                                            Copyright (C) 2025 Spectrum Sustainable Print Solution. All rights reserved.
+                                    <td style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 10px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin-bottom: 5px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            Spectrum Sustainable Printing <br>
+                                            DIFC, Gate 5, Gate Building, Level B1, Marble Walk, Dubai, UAE
                                         </p>
+                                        <p style="margin-bottom: 5px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            T: <a href="tel:+97143620566" style="text-decoration: none; color: #707070;">+971 (0) 4 362 0566</a> |  <a href="mailto:info@spectrumdubai.com" style="text-decoration: none; color: #707070;">E: info@spectrumdubai.com</a>
+                                        </p>
+                                        <p style="margin-bottom: 3px; margin-top: 15px; text-align: center; font-size: 7px;">
+                                           © 2025 Spectrum Sustainable Printing. All rights reserved
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="5"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
                                         <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
                                             You are receiving this message for any of the following reasons: <br>
                                             we have provided you with our services in the past or you are a valued client, <br>
                                             you opted in or interacted with us via our website
-                                        </p>
-                                        <p style="margin-bottom: 3px; margin-top: 0; text-align: center;">
-                                            Our mailing address is:
-                                        </p>
-                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
-                                            Spectrum Sustainable Print Solution, Level B1, Difc Gate District 4, Gate Ave, <br>
-                                            Dubai United Arab Emirates
                                         </p>
                                         <p style="margin-bottom: 0; margin-top: 0; text-align: center;">
                                             Click here <a href="{{unsubscribeLink}}" style="color: #4692db;">unsubscribe</a>.
@@ -1819,7 +1831,7 @@ emailTemplates.set('spec0005.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td height="15"></td>
+                                    <td height="20"></td>
                                 </tr>
                             </table>
                         </td>
