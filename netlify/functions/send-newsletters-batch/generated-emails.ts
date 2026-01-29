@@ -1996,7 +1996,7 @@ emailTemplates.set('spec0006.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                                     <td height="25"></td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td align="center">
                                         <a href="https://spectrumdubai.com/blog/2026/01/28/this-nations-future-began-on-paper-planned-printed-preserved?utm_source=newsletter&utm_medium=email&utm_campaign=2026_Feb_Forbes&utm_id=spec0006"><img src="{{host}}/newsletter/spec0006/0006-002.jpg" alt="THIS NATION'S FUTURE BEGAN ON PAPER. PLANNED. PRINTED. PRESERVED." width="500" height="562"></a>
                                     </td>
                                 </tr>
