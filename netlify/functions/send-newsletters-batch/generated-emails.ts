@@ -2632,7 +2632,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 <tr align="left" valign="top">
                                     <td style="padding-left: 30px;">
                                         <a href="https://thecardco.ae?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002" target="_blank">
-                                            <img src="images/0002-01.jpg" height="494" alt="2026 Spring Festival" width="480">
+                                            <img src="{{host}}/newsletter/tcc0002/0002-01.jpg" height="494" alt="2026 Spring Festival" width="480">
                                         </a>
                                     </td>
                                     <td style="padding-left: 10px; padding-right: 30px;">
@@ -2643,7 +2643,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                             <tr>
                                                 <td>
                                                     <a href="https://thecardco.ae?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002">
-                                                        <img src="images/0002-02.jpg" alt="The Card Co. Logo" width="50" height="49">
+                                                        <img src="{{host}}/newsletter/tcc0002/0002-02.jpg" alt="The Card Co. Logo" width="50" height="49">
                                                     </a>
                                                 </td>
                                             </tr>
@@ -2670,7 +2670,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 <tr>
                                     <td align="center">
                                         <a href="https://www.thecardco.ae/shop?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002">
-                                            <img src="images/0002-03.jpg" alt="Red gift card" width="320" height="290">
+                                            <img src="{{host}}/newsletter/tcc0002/0002-03.jpg" alt="Red gift card" width="320" height="290">
                                         </a>
                                     </td>
                                 </tr>
@@ -2700,7 +2700,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                             <tr>
                                                 <td style="text-transform: uppercase; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25; text-align: center;">
                                                     <a href="https://www.thecardco.ae/collections/wedding-stationary?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002" style="color: #000000; text-decoration: none;">
-                                                        <img src="images/0002-04.jpg" alt="PLACE CARDS" width="204" height="157">
+                                                        <img src="{{host}}/newsletter/tcc0002/0002-04.jpg" alt="PLACE CARDS" width="204" height="157">
                                                         <p style="margin: 0; padding-left: 0; padding-right: 0; padding-top: 10px; padding-bottom: 0;">
                                                             PLACE CARDS
                                                         </p>
@@ -2708,7 +2708,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                                 </td>
                                                 <td style="text-transform: uppercase; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25; text-align: center;">
                                                     <a href="https://www.thecardco.ae/valentines-collection?Category=Valentine%2520Card?&utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002" style="color: #000000; text-decoration: none;">
-                                                        <img src="images/0002-05.jpg" alt="GREETING CARDS" width="204" height="157">
+                                                        <img src="{{host}}/newsletter/tcc0002/0002-05.jpg" alt="GREETING CARDS" width="204" height="157">
                                                         <p style="margin: 0; padding-left: 0; padding-right: 0; padding-top: 10px; padding-bottom: 0;">
                                                             GREETING CARDS
                                                         </p>
@@ -2718,7 +2718,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                             <tr valign="top">
                                                 <td style="text-transform: uppercase; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25; text-align: center;">
                                                     <a href="https://www.thecardco.ae/shop-all?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002" style="color: #000000; text-decoration: none;">
-                                                        <img src="images/0002-06.jpg" alt="CUSTOM MONEY ENVELOPE" width="204" height="157">
+                                                        <img src="{{host}}/newsletter/tcc0002/0002-06.jpg" alt="CUSTOM MONEY ENVELOPE" width="204" height="157">
                                                         <p style="margin: 0; padding-left: 0; padding-right: 0; padding-top: 10px; padding-bottom: 0;">
                                                             CUSTOM MONEY <br>ENVELOPE
                                                         </p>
@@ -2726,7 +2726,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                                 </td>
                                                 <td style="text-transform: uppercase; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.25; text-align: center;">
                                                     <a href="https://www.thecardco.ae/valentines-collection?Category=Valentine%2520Gifts&utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002" style="color: #000000; text-decoration: none;">
-                                                        <img src="images/0002-07.jpg" alt="VALENTINE GIFTS" width="204" height="157">
+                                                        <img src="{{host}}/newsletter/tcc0002/0002-07.jpg" alt="VALENTINE GIFTS" width="204" height="157">
                                                         <p style="margin: 0; padding-left: 0; padding-right: 0; padding-top: 10px; padding-bottom: 0;">
                                                             VALENTINE GIFTS
                                                         </p>
@@ -2763,7 +2763,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 <tr>
                                     <td align="center">
                                         <a href="https://thecardco.ae/contact?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002">
-                                            <img src="images/0002-08.jpg" alt="Shop The Spring Festival Collection" width="320" height="39">
+                                            <img src="{{host}}/newsletter/tcc0002/0002-08.jpg" alt="Shop The Spring Festival Collection" width="320" height="39">
                                         </a>
                                     </td>
                                 </tr>
@@ -2777,7 +2777,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                         <td>
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <td width="300">
-                                    <img src="images/0002-09.jpg" alt="pens arranged in asterisk symbol" width="300" height="352">
+                                    <img src="{{host}}/newsletter/tcc0002/0002-09.jpg" alt="pens arranged in asterisk symbol" width="300" height="352">
                                 </td>
                                 <td width="300" align="left">
                                     <table width="100%" cellspacing="0" cellpadding="0">
@@ -2793,7 +2793,7 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                         <tr>
                                             <td>
                                                 <a href="https://www.thecardco.ae/shop?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0002">
-                                                    <img src="images/0002-10.jpg" alt="Shop The Spring Festival Collection" width="150" height="">
+                                                    <img src="{{host}}/newsletter/tcc0002/0002-10.jpg" alt="Shop The Spring Festival Collection" width="150" height="">
                                                 </a>
                                             </td>
                                         </tr>
@@ -2813,27 +2813,27 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                         <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.instagram.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="images/0002-11.png" alt="instagram">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-11.png" alt="instagram">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.facebook.com/TheCardCo/" target="_blank">
-                                                    <img width="18" height="18" src="images/0002-12.png" alt="facebook">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-12.png" alt="facebook">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
-                                                    <img width="18" height="18" src="images/0002-13.png" alt="linkedin">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-13.png" alt="linkedin">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.pinterest.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="images/0002-14.png" alt="pinterest">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-14.png" alt="pinterest">
                                                 </a>
                                             </li>
                                             <li style="margin:0 5px; display:inline-block;">
                                                 <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
-                                                    <img width="18" height="18" src="images/0002-15.png" alt="youtube">
+                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-15.png" alt="youtube">
                                                 </a>
                                             </li>
                                         </ul>
