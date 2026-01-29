@@ -2100,6 +2100,46 @@ emailTemplates.set('spec0006.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                         <td align="center">
                             <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
+                                    <td align="center">
+                                        <table width="142" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td align="center">
+                                                    <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.instagram.com/spectrum_print" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0006/0006-04.png" alt="instagram">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="http://www.facebook.com/spectrumuae" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0006/0006-05.png" alt="facebook">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="http://www.linkedin.com/company/spectrum-printing-press" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0006/0006-06.png" alt="linkedin">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.pinterest.com/spectrumuae" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0006/0006-07.png" alt="pinterest">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.youtube.com/channel/UCj20ViMQ2bknI3E6zIdoZWA" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/spec0006/0006-08.png" alt="youtube">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
                                     <td
                                         style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
                                         <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
@@ -2810,33 +2850,39 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                             <table width="470" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center">
-                                        <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.instagram.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-11.png" alt="instagram">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.facebook.com/TheCardCo/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-12.png" alt="facebook">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-13.png" alt="linkedin">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.pinterest.com/thecardco/" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-14.png" alt="pinterest">
-                                                </a>
-                                            </li>
-                                            <li style="margin:0 5px; display:inline-block;">
-                                                <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
-                                                    <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-15.png" alt="youtube">
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <table width="142" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td>
+                                                    <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.instagram.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-11.png" alt="instagram">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.facebook.com/TheCardCo/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-12.png" alt="facebook">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-13.png" alt="linkedin">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.pinterest.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-14.png" alt="pinterest">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0002/0002-15.png" alt="youtube">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
