@@ -2428,7 +2428,7 @@ emailTemplates.set('spec0007.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0
                     </tr>
                     <tr bgcolor="#f2f2f4">
                         <td align="center">
-                            <table width="450" cellspacing="0" cellpadding="0">
+                            <table width="480" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td height="25"></td>
                                 </tr>
