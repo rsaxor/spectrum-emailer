@@ -3285,6 +3285,296 @@ emailTemplates.set('tcc0002.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
 </body>
 
 </html>`);
+emailTemplates.set('tcc0003.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.5, target-densitydpi=device-dpi, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>
+        Spectrum UAE Ltd. - RAMADAN MUBARAK 2026
+    </title>
+    <style type="text/css">
+        body {
+            -webkit-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        table td {
+            border-collapse: collapse;
+        }
+
+        .yshortcuts a {
+            border-bottom: none !important;
+        }
+
+        .hline {
+            width: 100%;
+        }
+
+
+        /* Constrain email width for small screens */
+        @media screen and (max-width: 660px) {
+            table[class="container"] {
+                width: 95% !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Give content more room on mobile */
+        @media screen and (max-width: 480px) {
+            td[class="container-padding"] {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+        }
+
+        /* Styles for forcing columns to rows */
+        @media only screen and (max-width : 660px) {
+
+            /* force container columns to (horizontal) blocks */
+            td[class="force-col"] {
+                width: 100% !important;
+                display: block;
+                padding-right: 0 !important;
+            }
+
+            table[class="col-1"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[class="col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 95% !important;
+            }
+
+            /* remove bottom border for last column/row */ 
+            table[class="row2col-2"] {
+                /* unset table align="left/right" */
+                float: none !important;
+                width: 100% !important;
+            }
+
+            table[id="last-col-2"] {
+                float: none !important;
+                border-bottom: none !important;
+                margin-bottom: 0;
+            }
+
+            /* align images right and shrink them a bit */
+            img[class="col-2-img"] {
+                float: right;
+                margin-left: 6px;
+                max-width: 130px;
+            }
+
+            img[class="main-img"] {
+                width: 100%;
+            }
+
+            img[class="hline"] {
+                width: 100%;
+            }
+
+            img[class="col-main-img"] {
+                width: 100%;
+            }
+        }
+
+        sup {
+            line-height: 1;
+            font-size: 70%;
+            vertical-align: top;
+            mso-text-raise: 60%;
+        }
+
+        u+.body .glist {
+            margin-left: 0 !important;
+        }
+
+        @media only screen and (max-width: 640px) {
+            u+.body .glist {
+                margin-left: 25px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin:0;" topmargin="0" marginwidth="0" marginheight="0" leftmargin="0">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#fbfbfb">
+        <tr>
+            <td align="center" valign="top">
+                <table class="container" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
+                    <tr>
+                        <td style="padding-left: 0; padding-right: 0;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://thecardco.ae/?utm_source=newsletter&utm_medium=email&utm_campaign=2026_TCC_RAMADAN&utm_id=tcc0003_home">
+                                            <img src="{{host}}/newsletter/tcc0003/0003-01.jpg" alt="The Card Co. Logo" width="110" height="69">
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="25"></td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://www.thecardco.ae/collections/?utm_source=newsletter&utm_medium=email&utm_campaign=2026_TCC_RAMADAN&utm_id=tcc0003_collections">
+                                            <img src="{{host}}/newsletter/tcc0003/0003-02.jpg" alt="" width="350" height="457">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="40"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 100px; padding-right: 100px;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center">
+                                        <img src="{{host}}/newsletter/tcc0003/0003-08.jpg" alt="RAMADAN MUBARAK, May this holy month bring peace and blessings to you and your loved ones." width="300" height="60">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 18px; line-height: 1.25; text-transform: uppercase;">
+                                        <b>RAMADAN MUBARAK</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="10"></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
+                                        May this holy month bring peace and <br>
+                                        blessings to you and your loved ones.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="30"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 100px; padding-right: 100px;">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td style="text-align: center; color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
+                                        Looking for customised Ramadan gift packaging for your organisation? <br>
+                                        Get in touch with Spectrum Print to create thoughtful, <br>
+                                        well-made packaging in time for Ramadan.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="50"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table width="470" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="142" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td>
+                                                    <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.instagram.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0003/0003-03.png" alt="instagram">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.facebook.com/TheCardCo/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0003/0003-04.png" alt="facebook">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.linkedin.com/company/the-card-co-/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0003/0003-05.png" alt="linkedin">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.pinterest.com/thecardco/" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0003/0003-06.png" alt="pinterest">
+                                                            </a>
+                                                        </li>
+                                                        <li style="margin:0 5px; display:inline-block;">
+                                                            <a href="https://www.youtube.com/@thecardco.8743" target="_blank">
+                                                                <img width="18" height="18" src="{{host}}/newsletter/tcc0003/0003-07.png" alt="youtube">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        style="color: #707070; font-family: Arial,Helvetica, sans-serif; font-size: 7px; text-align: justify; line-height: 1.25;">
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center;">
+                                            Copyright (C) 2025 <a href="https://thecardco.ae/?utm_source=newsletter&utm_medium=email&utm_campaign=2026_spring_festival&utm_id=tcc0003_footer" target="_blank" style="color: #707070; text-decoration: none;;">The Card Co.</a> All rights reserved.
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            You are receiving this message for any of the following reasons: <br>
+                                            we have provided you with our services in the past or you are a valued client, <br>
+                                            you opted in or interacted with us via our website
+                                        </p>
+                                        <p style="margin-bottom: 3px; margin-top: 0; text-align: center;">
+                                            Our mailing address is:
+                                        </p>
+                                        <p style="margin-bottom: 8px; margin-top: 0; text-align: center; line-height: 1.5;">
+                                            The Card Co, DIFC, Level B1, The Gate Building Gate Avenue, Dubai - UAE
+                                        </p>
+                                        <p style="margin-bottom: 0; margin-top: 0; text-align: center;">
+                                            Click here <a href="{{unsubscribeLink}}" style="color: #4692db;">unsubscribe</a>.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>`);
 emailTemplates.set('test-spectrum-2025-09-16.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 
