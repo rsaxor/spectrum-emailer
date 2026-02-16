@@ -430,7 +430,7 @@ emailTemplates.set('hos0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 </tr>
                                 <tr>
                                     <td align="center">
-                                        <table width="142" cellspacing="0" cellpadding="0">
+                                        <table width="56" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td>
                                                     <ul style="list-style:none; margin:0; padding:0; display:flex; justify-content:center;">
