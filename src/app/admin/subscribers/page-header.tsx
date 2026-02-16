@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -28,6 +29,7 @@ export function PageHeader({
   isDeleting 
 }: PageHeaderProps) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="flex justify-between items-center mb-6">
@@ -35,6 +37,9 @@ export function PageHeader({
       <div className="flex gap-2">
         {!isSelectMode && (
           <>
+            <Button variant="outline" onClick={() => router.push('/admin/subscribers/cleanup')}>
+              Cleanup
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild><Button variant="outline">Delete</Button></DropdownMenuTrigger>
               <DropdownMenuContent align="end">
