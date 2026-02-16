@@ -409,7 +409,7 @@ emailTemplates.set('hos0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                                 <tr>
                                     <td style="text-align: center; color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
                                         Looking for customised Ramadan gift packaging for your organisation? <br>
-                                        Get in touch with Spectrum Print to create thoughtful, <br>
+                                        Get in touch with House of Spectrum to create thoughtful, <br>
                                         well-made packaging in time for Ramadan.
                                     </td>
                                 </tr>
