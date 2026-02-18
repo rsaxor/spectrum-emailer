@@ -344,7 +344,7 @@ emailTemplates.set('hos0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
             <td align="center" valign="top">
                 <table class="container" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF">
                     <tr>
-                        <td style="padding-left: 0; padding-right: 0;">
+                        <td align="center" style="padding-left: 0; padding-right: 0;">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td height="25"></td>
@@ -373,7 +373,7 @@ emailTemplates.set('hos0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                         <td height="40"></td>
                     </tr>
                     <tr>
-                        <td style="padding-left: 100px; padding-right: 100px;">
+                        <td align="center" style="padding-left: 100px; padding-right: 100px;">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center">
@@ -404,7 +404,7 @@ emailTemplates.set('hos0001.html', `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01
                         <td height="30"></td>
                     </tr>
                     <tr>
-                        <td style="padding-left: 100px; padding-right: 100px;">
+                        <td align="center" style="padding-left: 100px; padding-right: 100px;">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td style="text-align: center; color: #303030; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.25;">
